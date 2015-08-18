@@ -1,0 +1,18 @@
+{
+    "name": "blog/db",
+    "description": "...",
+    "license": "...",
+    "authors": [
+        {
+            "name": "Juris Tetarenko",
+            "email": "juris.tetarenko@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "extra": {
+        "installer-paths": {
+            "packages/{$name}": ["blog/db"]
+        }
+    }
+}

@@ -1,0 +1,51 @@
+@import "library/animate";
+@import "library/spinners";
+
+.category_list 
+{
+    margin-left: -40px;
+    list-style-type: none;
+}
+
+.fade
+{
+    opacity: 1;
+}
+
+.fade.ng-enter, .fade.ng-move
+{
+    -webkit-animation: fadeIn 1s;
+    -moz-animation: fadeIn 1s;
+    -o-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+.fade.ng-leave
+{
+	display:none;
+}
+
+.passive-watermark {
+    opacity: 0;
+}
+
+.activated-watermark {
+	font-family: Roboto;
+	color: #000;
+	text-align: center;
+	opacity: 0.99;
+}
+
+.activated {
+    background-color: black;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
