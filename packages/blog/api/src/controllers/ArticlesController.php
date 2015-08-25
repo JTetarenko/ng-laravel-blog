@@ -15,6 +15,10 @@ use Blog\Api\Requests\EditArticleRequest;
 
 use Illuminate\Support\Facades\Response;
 
+/**
+ * Class ArticlesController
+ * @package Blog\Api\Controllers
+ */
 class ArticlesController extends Controller
 {
     /**

@@ -5,9 +5,8 @@ namespace Blog\Api;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Class AcdApiServiceProvider
- *
- * @package Applyit\AcdApi
+ * Class BlogApiServiceProvider
+ * @package Blog\Api
  */
 class BlogApiServiceProvider extends ServiceProvider
 {

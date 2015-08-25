@@ -6,6 +6,10 @@
 
 namespace Blog\Api\Requests;;
 
+/**
+ * Class EditPasswordRequest
+ * @package Blog\Api\Requests
+ */
 class EditPasswordRequest extends BaseRequest
 {
     /**

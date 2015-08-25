@@ -8,6 +8,10 @@ use Carbon\Carbon;
 use JWTAuth;
 use Spatie\Activitylog\ActivitylogFacade as Activity;
 
+/**
+ * Class Article
+ * @package Blog\db\Models
+ */
 class Article extends Model
 {
     /**
@@ -72,7 +76,7 @@ class Article extends Model
      */
     public function user()
     {
-    	return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -82,7 +86,7 @@ class Article extends Model
      */
     public function categories()
     {
-    	return $this->belongsToMany(Category::class)->withTimestamps();
+        return $this->belongsToMany(Category::class)->withTimestamps();
     }
 
     /**
@@ -92,7 +96,7 @@ class Article extends Model
      */
     public function tags()
     {
-    	return $this->belongsToMany(Tag::class)->withTimestamps();
+        return $this->belongsToMany(Tag::class)->withTimestamps();
     }
 
     /**

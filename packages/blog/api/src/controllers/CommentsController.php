@@ -14,6 +14,10 @@ use Blog\Api\Requests\CommentRequest;
 
 use Illuminate\Support\Facades\Response;
 
+/**
+ * Class CommentsController
+ * @package Blog\Api\Controllers
+ */
 class CommentsController extends Controller
 {
     /**

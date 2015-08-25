@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\ActivitylogFacade as Activity;
 use JWTAuth;
 
+/**
+ * Class Comment
+ * @package Blog\db\Models
+ */
 class Comment extends Model
 {
-	/**
-	 * Fillable fields for comments
-	 * 
-	 * @var array
-	 */
+    /**
+     * Fillable fields for comments
+     * 
+     * @var array
+     */
     protected $fillable = ['body'];
 
     /**
@@ -23,7 +27,7 @@ class Comment extends Model
      */
     public function article()
     {
-    	return $this->belongsTo(Article::class);
+        return $this->belongsTo(Article::class);
     }
 
     /**
@@ -33,7 +37,7 @@ class Comment extends Model
      */
     public function user()
     {
-    	return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     /**

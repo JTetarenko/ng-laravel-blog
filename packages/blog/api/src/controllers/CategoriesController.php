@@ -16,6 +16,10 @@ use Blog\Api\Requests\CreateCategoryRequest;
 
 use Illuminate\Support\Facades\Response;
 
+/**
+ * Class CategoriesController
+ * @package Blog\Api\Controllers
+ */
 class CategoriesController extends Controller
 {
     protected $category;
@@ -23,12 +27,12 @@ class CategoriesController extends Controller
     /**
      * Only administators can create new category
      */
-	public function __construct(Category $category)
-	{
-		$this->middleware('create.category.permission', ['only' => ['store']]);
+    public function __construct(Category $category)
+    {
+        $this->middleware('create.category.permission', ['only' => ['store']]);
 
         $this->category = $category;
-	}
+    }
 
     /**
      * Display category list
@@ -61,18 +65,18 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-    	$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|unique:categories|min:3|max:20',
         ]);
 
-    	if ($validator->fails())
-    	{
+        if ($validator->fails())
+        {
             return response()->json(['error' => 'Category not created! Please check category name and try again...'], 422);
         }
 
         $this->category->saveCategory($request);
 
-    	return response()->json(['success' => 'Category successfully created!'], 200);
+        return response()->json(['success' => 'Category successfully created!'], 200);
     }
 
     /**

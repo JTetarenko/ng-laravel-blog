@@ -6,6 +6,10 @@
 
 namespace Blog\Api\Requests;
 
+/**
+ * Class EditArticleRequest
+ * @package Blog\Api\Requests
+ */
 class EditArticleRequest extends BaseRequest
 {
     /**

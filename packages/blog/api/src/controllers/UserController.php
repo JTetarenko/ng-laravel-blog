@@ -14,6 +14,10 @@ use Blog\db\Repositories\Interfaces\UsersInterface as User;
 
 use Illuminate\Support\Facades\Response;
 
+/**
+ * Class UserController
+ * @package Blog\Api\Controllers
+ */
 class UserController extends Controller
 {
     protected $user;
@@ -34,11 +38,11 @@ class UserController extends Controller
     {
         $user = $this->user->findUser($id);
 
-    	$latestActivities = $this->user->getUserLatestActivities($id);
+        $latestActivities = $this->user->getUserLatestActivities($id);
 
         $json = array_add($user, 'latest_activities', $latestActivities);
 
-    	return $json;
+        return $json;
     }
 
     /**

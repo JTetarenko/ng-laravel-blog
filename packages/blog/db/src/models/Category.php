@@ -4,6 +4,10 @@ namespace Blog\db\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Category
+ * @package Blog\db\Models
+ */
 class Category extends Model
 {
     /**

@@ -6,6 +6,10 @@
 
 namespace Blog\Api\Requests;
 
+/**
+ * Class CommentRequest
+ * @package Blog\Api\Requests
+ */
 class CommentRequest extends BaseRequest
 {
     /**

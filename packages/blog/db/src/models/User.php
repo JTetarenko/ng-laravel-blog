@@ -11,6 +11,10 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use JWTAuth;
 use Spatie\Activitylog\ActivitylogFacade as Activity;
 
+/**
+ * Class User
+ * @package Blog\db\Models
+ */
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
     use Authenticatable, CanResetPassword;

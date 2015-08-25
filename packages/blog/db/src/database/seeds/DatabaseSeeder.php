@@ -3,6 +3,9 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class DatabaseSeeder
+ */
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -22,6 +25,9 @@ class DatabaseSeeder extends Seeder
     }
 }
 
+/**
+ * Class GroupTableSeeder
+ */
 class GroupTableSeeder extends Seeder
 {
     public function run()
@@ -46,6 +52,9 @@ class GroupTableSeeder extends Seeder
     }
 }
 
+/**
+ * Class UserTableSeeder
+ */
 class UserTableSeeder extends Seeder
 {
     public function run()
@@ -79,6 +88,9 @@ class UserTableSeeder extends Seeder
     }
 }
 
+/**
+ * Class CategoryTableSeeder
+ */
 class CategoryTableSeeder extends Seeder
 {
     public function run()

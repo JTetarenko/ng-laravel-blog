@@ -6,6 +6,10 @@
 
 namespace Blog\Api\Requests;
 
+/**
+ * Class RegisterUserRequest
+ * @package Blog\Api\Requests
+ */
 class RegisterUserRequest extends BaseRequest
 {
     /**
