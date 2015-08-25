@@ -32,7 +32,11 @@ class ArticlesRepository extends Repository implements ArticlesInterface
      */
     public function getPublishedArticles()
     {
-        return Article::with('comments')->with('categories')->with('tags')->with('user')->latest('published_at')->published()->paginate($this::PAGES);;
+        return Article::with('comments')
+            ->with('categories')
+            ->with('tags')
+            ->with('user')
+            ->latest('published_at')->published()->paginate($this::PAGES);;
     }
 
     /**
@@ -43,7 +47,12 @@ class ArticlesRepository extends Repository implements ArticlesInterface
      */
     public function findArticle($slug)
     {
-        return Article::whereSlug($slug)->with('user')->with('comments')->with('comments.user')->with('categories')->with('tags')->get()[0];
+        return Article::whereSlug($slug)
+            ->with('user')
+            ->with('comments')
+            ->with('comments.user')
+            ->with('categories')
+            ->with('tags')->get()[0];
     }
 
     /**
@@ -77,9 +86,8 @@ class ArticlesRepository extends Repository implements ArticlesInterface
     public function deleteArticle($slug)
     {
         $article = $this->findArticle($slug);
+        
         Activity::log('deleted article @ '. $article->title, JWTAuth::parseToken()->authenticate());
-
-        flash()->success($article->title .' successfully deleted!');
 
         $article->delete();
     }
