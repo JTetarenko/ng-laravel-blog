@@ -33,6 +33,7 @@ var articlesIndexController = function($scope, $rootScope, articleFactory, Notif
                         .success(function()
                         {
                             Notification.success('<span class="fa fa-check-circle"></span> You successfully deleted article!');
+                            $window.location.reload();
                         })
                         .error(function(response)
                         {

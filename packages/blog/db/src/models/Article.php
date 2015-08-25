@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use JWTAuth;
 use Spatie\Activitylog\ActivitylogFacade as Activity;
+use Auth;
 
 /**
  * Class Article
@@ -136,7 +137,7 @@ class Article extends Model
      */
     public static function saveArticle($request)
     {
-        $article = JWTAuth::parseToken()->authenticate()->articles()->create($request->all());
+        $article = Auth::user()->articles()->create($request->all());
 
         $article->syncCategories($article, $request->category_list);
 
@@ -145,7 +146,7 @@ class Article extends Model
             $article->syncTags($article, $request->tag_list);
         }
 
-        Activity::log('created article @ '. $article->title, JWTAuth::parseToken()->authenticate());
+        return $article;
     }
 
     /**
@@ -171,7 +172,7 @@ class Article extends Model
             $article->tags()->delete();
         }
 
-        Activity::log('edited article @ '. $article->title, JWTAuth::parseToken()->authenticate());
+        return $article;
     }
 
     /**

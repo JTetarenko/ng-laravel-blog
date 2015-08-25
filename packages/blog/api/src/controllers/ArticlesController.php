@@ -13,6 +13,9 @@ use Blog\db\Repositories\Interfaces\TagsInterface as Tag;
 use Blog\Api\Requests\CreateArticleRequest;
 use Blog\Api\Requests\EditArticleRequest;
 
+// Events
+use App\Events\UserDoneActivity;
+
 use Illuminate\Support\Facades\Response;
 
 /**
@@ -100,9 +103,9 @@ class ArticlesController extends Controller
      */
     public function store(CreateArticleRequest $request)
     {
-        $this->article->saveArticle($request);
+        $article = $this->article->saveArticle($request);
 
-        Activity::log('created article @ '. $article->title, JWTAuth::parseToken()->authenticate());
+        event(new UserDoneActivity(['type' => 'created article', 'in' => $article->title]));
 
         return response()->json(['success' => 'Article successfully created!'], 200);
     }
@@ -146,7 +149,9 @@ class ArticlesController extends Controller
      */
     public function update($slug, EditArticleRequest $request)
     {
-        $this->article->editArticle($slug, $request);
+        $article = $this->article->editArticle($slug, $request);
+
+        event(new UserDoneActivity(['type' => 'edited article', 'in' => $article->title]));
 
         return response()->json(['success' => 'Article successfully edited'], 200);
     }
@@ -159,7 +164,9 @@ class ArticlesController extends Controller
      */
     public function destroy($slug)
     {
-        $this->article->deleteArticle($slug);
+        $article = $this->article->deleteArticle($slug);
+
+        event(new UserDoneActivity(['type' => 'deleted article', 'in' => $article->title]));
 
         return response()->json(['success' => 'Article successfully deleted!'], 200);
     }

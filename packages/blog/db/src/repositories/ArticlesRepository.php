@@ -8,6 +8,9 @@ use Blog\db\Repositories\Repository;
 // Eloquent models
 use Blog\db\Models\Article;
 
+use Spatie\Activitylog\ActivitylogFacade as Activity;
+use JWTAuth;
+
 /**
  * Class ArticlesRepository
  * @package Blog\db\Repositories
@@ -29,7 +32,7 @@ class ArticlesRepository extends Repository implements ArticlesInterface
      */
     public function getPublishedArticles()
     {
-        return Article::with('comments')
+        return $this->model->with('comments')
             ->with('categories')
             ->with('tags')
             ->with('user')
@@ -44,7 +47,7 @@ class ArticlesRepository extends Repository implements ArticlesInterface
      */
     public function findArticle($slug)
     {
-        return Article::whereSlug($slug)
+        return $this->model->whereSlug($slug)
             ->with('user')
             ->with('comments')
             ->with('comments.user')
@@ -59,7 +62,7 @@ class ArticlesRepository extends Repository implements ArticlesInterface
      */
     public function saveArticle($request)
     {
-        Article::saveArticle($request);
+        return $this->model->saveArticle($request);
     }
 
     /**
@@ -72,7 +75,7 @@ class ArticlesRepository extends Repository implements ArticlesInterface
     {
         $article = $this->findArticle($slug);
 
-        Article::editArticle($article, $request);
+        return $this->model->editArticle($article, $request);
     }
 
     /**
@@ -83,6 +86,8 @@ class ArticlesRepository extends Repository implements ArticlesInterface
     public function deleteArticle($slug)
     {
         $article = $this->findArticle($slug);
+        
+        
 
         $article->delete();
     }
