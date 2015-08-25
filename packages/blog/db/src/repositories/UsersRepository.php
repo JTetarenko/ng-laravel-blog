@@ -89,8 +89,6 @@ class UsersRepository extends Repository implements UsersInterface
         $user = $this->findUser($id);
 
         $this->model->editProfile($request, $user);
-
-        flash()->success('Profile settings successfuly updated!');
     }
 
     /**

@@ -30,8 +30,6 @@ class CategoriesRepository extends Repository implements CategoriesInterface
     public function saveCategory($request)
     {
         Category::create($request->all());
-
-        flash()->success('Category successfully created!');
     }
 
     /**
@@ -55,7 +53,12 @@ class CategoriesRepository extends Repository implements CategoriesInterface
     {
         $category = $this->findCategory($id);
 
-        return $category->articles()->with('categories')->with('user')->with('tags')->with('comments')->latest('published_at')->published()->paginate($this::PAGES);
+        return $category->articles()
+            ->with('categories')
+            ->with('user')
+            ->with('tags')
+            ->with('comments')
+            ->latest('published_at')->published()->paginate($this::PAGES);
     }
 
     /**

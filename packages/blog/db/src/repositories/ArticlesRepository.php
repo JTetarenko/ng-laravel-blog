@@ -8,9 +8,6 @@ use Blog\db\Repositories\Repository;
 // Eloquent models
 use Blog\db\Models\Article;
 
-use Spatie\Activitylog\ActivitylogFacade as Activity;
-use JWTAuth;
-
 /**
  * Class ArticlesRepository
  * @package Blog\db\Repositories
@@ -86,8 +83,6 @@ class ArticlesRepository extends Repository implements ArticlesInterface
     public function deleteArticle($slug)
     {
         $article = $this->findArticle($slug);
-        
-        Activity::log('deleted article @ '. $article->title, JWTAuth::parseToken()->authenticate());
 
         $article->delete();
     }

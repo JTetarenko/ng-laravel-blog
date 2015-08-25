@@ -9,7 +9,7 @@ use Blog\db\Repositories\Interfaces\ArticlesInterface as Article;
 use Blog\db\Repositories\Interfaces\CategoriesInterface as Category;
 use Blog\db\Repositories\Interfaces\TagsInterface as Tag;
 
-//Requests
+// Requests
 use Blog\Api\Requests\CreateArticleRequest;
 use Blog\Api\Requests\EditArticleRequest;
 
@@ -40,6 +40,7 @@ class ArticlesController extends Controller
 
     /**
      * Tag list
+     * 
      * @var array
      */
     protected $tagList;
@@ -100,6 +101,8 @@ class ArticlesController extends Controller
     public function store(CreateArticleRequest $request)
     {
         $this->article->saveArticle($request);
+
+        Activity::log('created article @ '. $article->title, JWTAuth::parseToken()->authenticate());
 
         return response()->json(['success' => 'Article successfully created!'], 200);
     }

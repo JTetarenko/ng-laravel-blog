@@ -65,6 +65,12 @@ class TagsRepository extends Repository implements TagsInterface
     {
         $tag = $this->findTag($id);
 
-        return $tag->articles()->latest('published_at')->with('categories')->with('user')->with('tags')->with('comments')->published()->paginate($this::PAGES);
+        return $tag->articles()
+        ->latest('published_at')
+        ->with('categories')
+        ->with('user')
+        ->with('tags')
+        ->with('comments')
+        ->published()->paginate($this::PAGES);
     }
 }
