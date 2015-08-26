@@ -4012,10 +4012,6 @@ Copyright (c) 2015 Daniel Eden
   height: 10px;
   background: #8cdb8b; }
 
-.category_list {
-  margin-left: -40px;
-  list-style-type: none; }
-
 .fade {
   opacity: 1; }
 
@@ -4025,6 +4021,10 @@ Copyright (c) 2015 Daniel Eden
 
 .fade.ng-leave {
   display: none; }
+
+.category_list {
+  margin-left: -40px;
+  list-style-type: none; }
 
 .passive-watermark {
   opacity: 0; }

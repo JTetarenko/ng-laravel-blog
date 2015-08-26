@@ -12,6 +12,9 @@ use Blog\db\Repositories\Interfaces\ArticlesInterface as Article;
 // Requests
 use Blog\Api\Requests\CommentRequest;
 
+// Events
+use App\Events\UserDoneActivity;
+
 use Illuminate\Support\Facades\Response;
 
 /**
@@ -55,7 +58,9 @@ class CommentsController extends Controller
      */
     public function store(CommentRequest $request, $slug)
     {
-        $this->comment->saveComment($request, $slug);
+        $article = $this->comment->saveComment($request, $slug);
+
+        event(new UserDoneActivity('commented in @ '. $article->title));
 
         return response()->json(['success' => 'Comment successfully created!'], 200);
     }
@@ -84,7 +89,9 @@ class CommentsController extends Controller
      */
     public function update(CommentRequest $request, $slug, $id)
     {
-        $this->comment->editComment($request, $slug, $id);
+        $article = $this->comment->editComment($request, $slug, $id);
+
+        event(new UserDoneActivity('edited comment in @ '. $article->title));
 
         return response()->json(['success' => 'Comment successfully edited!'], 200);
     }
@@ -101,6 +108,8 @@ class CommentsController extends Controller
         $article = $this->article->findArticle($slug);
 
         $this->comment->deleteComment($article, $id);
+
+        event(new UserDoneActivity('deleted comment in @ '. $article->title));
 
         return response()->json(['success' => 'Category successfully deleted!'], 200);
     }

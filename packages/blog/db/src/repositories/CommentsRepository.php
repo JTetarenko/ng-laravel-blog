@@ -8,9 +8,6 @@ use Blog\db\Repositories\Repository;
 // Eloquent models
 use Blog\db\Models\Comment;
 
-use Spatie\Activitylog\ActivitylogFacade as Activity;
-use JWTAuth;
-
 /**
  * Class CommentsRepository
  * @package Blog\db\Repositories
@@ -33,7 +30,7 @@ class CommentsRepository extends Repository implements CommentsInterface
      */
     public function saveComment($request, $slug)
     {
-        Comment::saveComment($request, $slug);
+        return $this->model->saveComment($request, $slug);
     }
 
     /**
@@ -45,7 +42,7 @@ class CommentsRepository extends Repository implements CommentsInterface
      */
     public function editComment($request, $slug, $id)
     {
-        Comment::editComment($request, $slug, $id);
+        return $this->model->editComment($request, $slug, $id);
     }
 
     /**
@@ -56,10 +53,8 @@ class CommentsRepository extends Repository implements CommentsInterface
      */
     public function deleteComment($article, $id)
     {
-        $title = $article->title;
-
         $article->comments()->find($id)->delete();
 
-        Activity::log('deleted comment in @ '. $title, JWTAuth::parseToken()->authenticate());
+        return $article;
     }
 }

@@ -12,6 +12,11 @@ use Blog\Api\Requests\RegisterUserRequest;
 // Repository
 use Blog\db\Repositories\Interfaces\UsersInterface as User;
 
+// Events
+use App\Events\UserDoneActivity;
+
+use Auth;
+use JWTAuth;
 use Illuminate\Support\Facades\Response;
 
 /**
@@ -26,6 +31,7 @@ class UserController extends Controller
     {
         $this->user = $user;
         $this->middleware('user_exists', ['only' => ['show']]);
+        $this->middleware('edit.profile.permission', ['only' => ['changeEmail', 'changePassword']]);
     }
 
     /**
@@ -67,7 +73,9 @@ class UserController extends Controller
      */
     public function changeEmail(EditEmailRequest $request, $id)
     {
-        $this->user->editProfile($request, $id);
+        $user = $this->user->editProfile($request, $id);
+
+        event(new UserDoneActivity(['type' => 'edited profile', 'in' => $user->username]));
 
         return response()->json(['success' => 'User successfully edited!'], 200);
     }
@@ -75,13 +83,15 @@ class UserController extends Controller
     /**
      * Change user password
      * 
-     * @param  EditPasswordRequest  $request 
-     * @param  integer              $id      
-     * @return json                
+     * @param  EditPasswordRequest  $request
+     * @param  integer              $id
+     * @return json
      */
     public function changePassword(EditPasswordRequest $request, $id)
     {
-        $this->user->editProfile($request, $id);
+        $user = $this->user->editProfile($request, $id);
+
+        event(new UserDoneActivity('edited profile @ '. $user->username));
 
         return response()->json(['success' => 'User successfully edited!'], 200);
     }

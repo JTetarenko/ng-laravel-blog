@@ -8,9 +8,6 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-use JWTAuth;
-use Spatie\Activitylog\ActivitylogFacade as Activity;
-
 /**
  * Class User
  * @package Blog\db\Models
@@ -88,7 +85,5 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public static function editProfile($request, User $user)
     {
         $user->update($request->all());
-
-        Activity::log('edited profile @ '. $user->username, JWTAuth::parseToken()->authenticate());
     }
 }

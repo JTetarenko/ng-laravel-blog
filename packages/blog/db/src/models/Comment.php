@@ -4,8 +4,7 @@ namespace Blog\db\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-use Spatie\Activitylog\ActivitylogFacade as Activity;
-use JWTAuth;
+use Auth;
 
 /**
  * Class Comment
@@ -52,12 +51,12 @@ class Comment extends Model
 
         $comment = new Comment;
 
-        $comment->user_id = JWTAuth::parseToken()->authenticate()->id;
+        $comment->user_id = Auth::user()->id;
         $comment->body = $request->body;
 
         $article->comments()->save($comment);
 
-        Activity::log('commented in @ '. $article->title, JWTAuth::parseToken()->authenticate());
+        return $article;
     }
 
     /**
@@ -74,10 +73,10 @@ class Comment extends Model
         $comment = Comment::find($id);
 
         $comment->body = $request->body;
-        $comment->edited = JWTAuth::parseToken()->authenticate()->username;
+        $comment->edited = Auth::user()->username;
 
         $article->comments()->save($comment);
 
-        Activity::log('edited comment in @ '. $article->title, JWTAuth::parseToken()->authenticate());
+        return $article;
     }
 }

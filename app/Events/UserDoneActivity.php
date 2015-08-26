@@ -6,20 +6,27 @@ use App\Events\Event;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
+/**
+ * Class UserDoneActivity
+ * @package App\Events
+ */
 class UserDoneActivity extends Event
 {
     use SerializesModels;
 
-    public $data = [];
+    /**
+     * Activity log
+     * 
+     * @var string
+     */
+    public $string;
 
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * @param string $string
      */
-    public function __construct($data)
+    public function __construct($string)
     {
-        $this->data = $data;
+        $this->string = $string;
     }
 
     /**

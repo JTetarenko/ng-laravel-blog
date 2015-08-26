@@ -32,6 +32,7 @@ class Kernel extends HttpKernel
         'article_exsists'               => \App\Http\Middleware\RedirectIfArticleNotExsists::class,
         'create.category.permission'    => \App\Http\Middleware\CreateCategoryPermission::class,
         'edit.comment.permission'       => \App\Http\Middleware\EditCommentPermission::class,
-        'user_exists'                   => \App\Http\Middleware\RedirectIfUserNotExsists::class
+        'user_exists'                   => \App\Http\Middleware\RedirectIfUserNotExsists::class,
+        'edit.profile.permission'       => \App\Http\Middleware\UserEditPermission::class,
     ];
 }

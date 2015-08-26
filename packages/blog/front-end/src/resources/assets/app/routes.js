@@ -94,4 +94,4 @@ angular.module('blog')
         });
         
         $sceProvider.enabled(false);
-    })
+    });

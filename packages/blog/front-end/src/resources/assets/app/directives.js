@@ -13,9 +13,7 @@ angular.module('blog')
               '<li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getArticles(totalPages)">&raquo;</a></li>'+
             '</ul>'
         };
-    });
-
-angular.module('blog')
+    })
     .directive('ckEditor', function() {
         return {
             require: '?ngModel',

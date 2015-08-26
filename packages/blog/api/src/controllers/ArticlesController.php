@@ -105,7 +105,7 @@ class ArticlesController extends Controller
     {
         $article = $this->article->saveArticle($request);
 
-        event(new UserDoneActivity(['type' => 'created article', 'in' => $article->title]));
+        event(new UserDoneActivity('created article @ '. $article->title));
 
         return response()->json(['success' => 'Article successfully created!'], 200);
     }
@@ -151,7 +151,7 @@ class ArticlesController extends Controller
     {
         $article = $this->article->editArticle($slug, $request);
 
-        event(new UserDoneActivity(['type' => 'edited article', 'in' => $article->title]));
+        event(new UserDoneActivity('edited article @ '. $article->title));
 
         return response()->json(['success' => 'Article successfully edited'], 200);
     }
@@ -166,7 +166,7 @@ class ArticlesController extends Controller
     {
         $article = $this->article->deleteArticle($slug);
 
-        event(new UserDoneActivity(['type' => 'deleted article', 'in' => $article->title]));
+        event(new UserDoneActivity('deleted article @ '. $article->title));
 
         return response()->json(['success' => 'Article successfully deleted!'], 200);
     }

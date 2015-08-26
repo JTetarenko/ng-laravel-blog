@@ -86,9 +86,9 @@ class ArticlesRepository extends Repository implements ArticlesInterface
     public function deleteArticle($slug)
     {
         $article = $this->findArticle($slug);
-        
-        
 
         $article->delete();
+
+        return $article;
     }
 }

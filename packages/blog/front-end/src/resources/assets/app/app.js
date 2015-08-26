@@ -9,6 +9,18 @@ var blog = angular.module('blog', [
     'treasure-overlay-spinner',
     'ngCookies'
 ])
+.config(['$httpProvider', '$provide', function($httpProvider, $provide) {
+        $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+        $provide.factory('ErrorInterceptor', function ($q) {
+            return {
+                responseError: function(rejection) {
+                    return $q.reject(rejection);
+                }
+            };
+        });
+        
+        $httpProvider.interceptors.push('AuthInterceptor');
+    }])
 .run(function($rootScope, $cookies, $http, $interval, $state, Notification, $window, $timeout)
 {
     $rootScope.endPoint = 'http://myblog.lv/api';

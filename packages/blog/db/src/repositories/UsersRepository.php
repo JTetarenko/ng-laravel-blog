@@ -9,7 +9,7 @@ use Blog\db\Repositories\Repository;
 use Blog\db\Models\User;
 use Blog\db\Models\Group;
 
-// Laravel facades
+// Vendor facades
 use Auth;
 use Spatie\Activitylog\Models\Activity;
 
@@ -89,6 +89,8 @@ class UsersRepository extends Repository implements UsersInterface
         $user = $this->findUser($id);
 
         $this->model->editProfile($request, $user);
+
+        return $user;
     }
 
     /**
