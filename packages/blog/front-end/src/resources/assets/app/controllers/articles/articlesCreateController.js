@@ -1,50 +1,26 @@
 angular.module('blog')
-    .controller('articlesCreateController', ['$scope', '$rootScope', '$state', 'Notification', 'articleFactory', '$interval', 'blockUI',
-        function($scope, $rootScope, $state, Notification, articleFactory, $interval, blockUI)
+    .controller('articlesCreateController', ['$scope', '$state', 'Notification', 'articleFactory',
+        function($scope, $state, Notification, articleFactory)
         {
             $scope.published_at = new Date();
 
-            if ($rootScope.loggedIn)
-            {
-                blockUI.start();
-
-                var timer = $interval(function()
+            articleFactory.beforeCreateArticle()
+                .success(function(response)
                 {
-                    if ($rootScope.userObtained)
-                    {
-                        $interval.cancel(timer);
-                        delete timer;
-                        
-                        articleFactory.beforeCreateArticle($rootScope.token)
-                            .success(function(response)
-                            {
-                                $scope.category_list = [];
-                                $scope.tag_list = [];
+                    $scope.category_list = [];
+                    $scope.tag_list = [];
 
-                                $scope.categories = response.categories;
-                                $scope.tags = response.tags;
-                                blockUI.stop();
-                            })
-                            .error(function(response)
-                            {
-                                blockUI.stop();
-                                $state.go('articles');
+                    $scope.categories = response.categories;
+                    $scope.tags = response.tags;
+                })
+                .error(function(response)
+                {
+                    $state.go('articles');
 
-                                $rootScope.notification.type = 'error';
-                                $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                                $rootScope.notification.popup = true;
-                            });
-                    }
-                }, 100);
-            }
-            else
-            {
-                $state.go('articles');
-
-                $rootScope.notification.type = 'error';
-                $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                $rootScope.notification.popup = true;
-            }
+                    $rootScope.notification.type = 'error';
+                    $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
+                    $rootScope.notification.popup = true;
+                });
             
             $scope.create = function()
             {
@@ -74,7 +50,7 @@ angular.module('blog')
                     }
                 }
                 
-                articleFactory.createArticle(data, $rootScope.token)
+                articleFactory.createArticle(data)
                     .success(function()
                     {
                         $state.go('articles');

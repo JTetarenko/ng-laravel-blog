@@ -5,13 +5,13 @@
 
     <ol class="breadcrumb">
         <li><a ui-sref="articles">Articles</a></li>
-        <li class="active">@{{ article.title }}</li>
+        <li class="active"><% article.title %></li>
     </ol>
 
     <article>
 
         <h2>
-            @{{ article.title }}
+            <% article.title %>
             <span ng-show="auth.user.id === article.user.id || auth.user.group_id === 1">
                 <a role="button" class="btn btn-xs btn-default" ui-sref="articles_edit({ articleSlug: article.slug })" style="margin-right: -5px"><span class="glyphicon glyphicon-pencil"></span></a>
                 <button type="button" class="btn btn-xs btn-default" ng-click="delete()"><span class="glyphicon glyphicon-remove"></span></button>
@@ -19,21 +19,21 @@
         </h2>
 
         <p class="lead" style="margin-bottom: 10px">
-            by <a ui-sref="users_show({ userID: article.user.id })" style="text-transform: capitalize">@{{ article.user.username }}</a>
+            by <a ui-sref="users_show({ userID: article.user.id })" style="text-transform: capitalize"><% article.user.username %></a>
         </p>
         <p>
             <span class="glyphicon glyphicon-book"></span>
-            <a ng-repeat="category in article.categories" ui-sref="articles_filter({ filterBy: 'categories', filterID: category.id })" class="label label-default" style="margin-right: 3px">@{{ category.name }}</a>
+            <a ng-repeat="category in article.categories" ui-sref="articles_filter({ filterBy: 'categories', filterID: category.id })" class="label label-default" style="margin-right: 3px"><% category.name %></a>
         </p>
-        <p><span class="glyphicon glyphicon-time"></span> <span time-ago from-time='@{{ article.published_at.date }}'></span time-ago></p>
+        <p><span class="glyphicon glyphicon-time"></span> <span time-ago from-time='<% article.published_at.date %>'></span time-ago></p>
         <hr>
-        <img class="img-responsive" ng-src="@{{ article.image_url }}" alt="" width="900px" height="300px">
+        <img class="img-responsive" ng-src="<% article.image_url %>" alt="" width="900px" height="300px">
         <hr>
         <span ng-bind-html="article.body"></span>
 
         <div ng-if="article.tags.length > 0" style="margin-top: 1em">
             <span class="glyphicon glyphicon-tags" style="margin-right: 5px"></span> 
-            <a ng-repeat="tag in article.tags" ui-sref="articles_filter({ filterBy: 'tags', filterID: tag.id })" class="label label-primary" style="margin-right: 2px"><b>#</b><i>@{{ tag.name }}</i></a>
+            <a ng-repeat="tag in article.tags" ui-sref="articles_filter({ filterBy: 'tags', filterID: tag.id })" class="label label-primary" style="margin-right: 2px"><b>#</b><i><% tag.name %></i></a>
         </div>
 
     </article>
@@ -41,7 +41,7 @@
     <comments id="comments">
 
         <fieldset style="margin-top: 1em">
-            <legend>Comments (@{{ article.comments.length }})</legend>
+            <legend>Comments (<% article.comments.length %>)</legend>
 
             <div class="well" ng-if="article.comments.length === 0">
                 No comments
@@ -53,7 +53,7 @@
                 <div class="panel panel-default">
                  <div class="panel-heading">
                    <h3 class="panel-title">
-                        <a ui-sref="users_show({ userID: comment.user.id })"><b style="text-transform: capitalize">@{{ comment.user.username }}</b></a> <span time-ago from-time="@{{ comment.created_at }}"></span time-ago>
+                        <a ui-sref="users_show({ userID: comment.user.id })"><b style="text-transform: capitalize"><% comment.user.username %></b></a> <span time-ago from-time="<% comment.created_at %>"></span time-ago>
 
                         <span ng-show="auth.user.id === comment.user.id || auth.user.group_id === 1">
                             <a role="button" class="btn btn-xs btn-default" ui-sref="comments_edit({ articleSlug: article.slug, commentID: comment.id })" style="margin-right: -3px"><span class="glyphicon glyphicon-pencil"></span></a>
@@ -65,7 +65,7 @@
                    <span ng-bind-html="comment.body"></span>
                   </div>
                   <div class="panel-footer" ng-if="comment.created_at !== comment.updated_at">
-                   <i><span style="text-transform: capitalize">@{{ comment.edited }}</span> edited <span time-ago from-time="@{{ comment.updated_at }}"></span time-ago></i>  
+                   <i><span style="text-transform: capitalize"><% comment.edited %></span> edited <span time-ago from-time="<% comment.updated_at %>"></span time-ago></i>  
                   </div>
                 </div>
             </div>

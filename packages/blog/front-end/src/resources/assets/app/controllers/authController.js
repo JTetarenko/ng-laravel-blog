@@ -1,8 +1,8 @@
 angular.module('blog')
-    .controller('authController', ['$scope', '$rootScope', 'Notification', '$state', '$auth', 'userFactory', '$cookies', '$window', '$state',
+    .controller('authController', ['$scope', '$rootScope', 'Notification', 'userFactory', '$cookies', '$window', '$state',
         function($scope, $rootScope, Notification, userFactory, $cookies, $window, $state)
         {
-            if ($rootScope.loggedIn)
+            if ($cookies.get('token') !== undefined)
             {
                 $state.go('home');
             }
@@ -19,12 +19,10 @@ angular.module('blog')
                     {
                         $cookies.put('token', response.token);
 
-                        $rootScope.token = response.token;
-
-                        userFactory.getUserFromToken(response.token)
+                        userFactory.getUserFromToken($cookies.get('token'))
                             .success(function(data)
                             {
-                                $rootScope.user = data.user;
+                                $cookies.putObject('user', data.user);
 
                                 $window.location.reload();
                             })

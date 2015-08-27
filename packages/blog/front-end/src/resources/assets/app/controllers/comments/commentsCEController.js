@@ -1,6 +1,6 @@
 angular.module('blog')
-    .controller('commentsCEController', ['$scope', '$rootScope', 'commentFactory', 'Notification', '$window', '$interval',
-        function($scope, $rootScope, commentFactory, $state, $stateParams, Notification, $window, $interval)
+    .controller('commentsCEController', ['$scope', '$cookies', 'commentFactory', '$state', '$stateParams', 'Notification', '$window',
+        function($scope, $cookies, commentFactory, $state, $stateParams, Notification, $window)
         {
             if ($stateParams.commentID === undefined)
             {
@@ -12,7 +12,7 @@ angular.module('blog')
                         body: $scope.create_body
                     };
 
-                    commentFactory.createComment($stateParams.articleSlug, data, $rootScope.token)
+                    commentFactory.createComment($stateParams.articleSlug, data)
                         .success(function()
                         {
                             $window.location.reload();
@@ -27,63 +27,43 @@ angular.module('blog')
             {
                 $scope.type = "edit";
 
-                if ($rootScope.loggedIn)
-                {
-                    var timer = $interval(function()
+                commentFactory.beforeEdit($stateParams.articleSlug, $stateParams.commentID)
+                    .success(function(response)
                     {
-                        if ($rootScope.userObtained)
+                        $scope.edit_body = response.body;
+
+                        $scope.edit = function()
                         {
-                            $interval.cancel(timer);
-                            delete timer;
+                            data = {
+                                body: $scope.edit_body,
+                                token: $rootScope.token
+                            }
 
-                            commentFactory.beforeEdit($stateParams.articleSlug, $stateParams.commentID, $rootScope.token)
-                                .success(function(response)
+                            commentFactory.editComment($stateParams.articleSlug, $stateParams.commentID, data)
+                                .success(function()
                                 {
-                                    $scope.edit_body = response.body;
-
-                                    $scope.edit = function()
-                                    {
-                                        data = {
-                                            body: $scope.edit_body,
-                                            token: $rootScope.token
-                                        }
-
-                                        commentFactory.editComment($stateParams.articleSlug, $stateParams.commentID, data)
-                                            .success(function()
-                                            {
-                                                $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
-                                            })
-                                            .error(function(response)
-                                            {
-                                                if (response.errors.body[0] !== undefined)
-                                                {
-                                                    Notification.error({
-                                                        message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.body[0],
-                                                        delay: 10000
-                                                    });
-                                                }
-                                            });
-                                    };
+                                    $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
                                 })
                                 .error(function(response)
                                 {
-                                    $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
-
-                                    $rootScope.notification.type = 'error';
-                                    $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                                    $rootScope.notification.popup = true;
+                                    if (response.errors.body[0] !== undefined)
+                                    {
+                                        Notification.error({
+                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.body[0],
+                                            delay: 10000
+                                        });
+                                    }
                                 });
-                        }
-                    });
-                }
-                else
-                {
-                    $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
+                        };
+                    })
+                    .error(function(response)
+                    {
+                        $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
 
-                    $rootScope.notification.type = 'error';
-                    $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                    $rootScope.notification.popup = true;
-                }
+                        $rootScope.notification.type = 'error';
+                        $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
+                        $rootScope.notification.popup = true;
+                    });
             }
         }
 ]);

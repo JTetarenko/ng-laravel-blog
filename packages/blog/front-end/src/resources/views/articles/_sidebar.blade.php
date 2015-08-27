@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-lg-6">
                 <ul class="category_list">
-                    <li class="fade" ng-repeat="category in categories | orderBy: '+name'"><a ui-sref="articles_filter({ filterBy: 'categories', filterID: category.id })">@{{ category.name }}</a></li>
+                    <li class="fade" ng-repeat="category in categories | orderBy: '+name'"><a ui-sref="articles_filter({ filterBy: 'categories', filterID: category.id })"><% category.name %></a></li>
                 </ul>
             </div>
         </div>

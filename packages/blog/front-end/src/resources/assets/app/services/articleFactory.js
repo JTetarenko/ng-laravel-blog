@@ -19,29 +19,29 @@ angular.module('blog')
                 return $http.get($rootScope.endPoint + '/articles/' + slug);
             };
 
-            factory.beforeCreateArticle = function(token)
+            factory.beforeCreateArticle = function()
             {
                 return $http.get($rootScope.endPoint + '/articles/create');
             };
 
-            factory.createArticle = function(data, token)
+            factory.createArticle = function(data)
             {
                 return $http.post($rootScope.endPoint + '/articles', data);
             };
 
-            factory.beforeEditArticle = function(slug, token)
+            factory.beforeEditArticle = function(slug)
             {
-                return $http.get($rootScope.endPoint + '/articles/' + slug + '/edit?token=' + token);
+                return $http.get($rootScope.endPoint + '/articles/' + slug + '/edit');
             };
 
-            factory.editArticle = function(slug, dataWithToken)
+            factory.editArticle = function(slug, data)
             {
-                return $http.put($rootScope.endPoint + '/articles/' + slug + '?token=' + dataWithToken.token, dataWithToken);
+                return $http.put($rootScope.endPoint + '/articles/' + slug, data);
             };
 
-            factory.deleteArticle = function(slug, token)
+            factory.deleteArticle = function(slug)
             {
-                return $http.delete($rootScope.endPoint + '/articles/' + slug + '?token=' + token);
+                return $http.delete($rootScope.endPoint + '/articles/' + slug);
             };
 
             factory.filterByCategory = function(id, pageNumber)

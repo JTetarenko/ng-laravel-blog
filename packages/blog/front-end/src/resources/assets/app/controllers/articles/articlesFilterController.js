@@ -1,6 +1,6 @@
 angular.module('blog')
-    .controller('articlesFilterController', ['$scope', '$rootScope', '$state', '$stateParams', 'Notification', 'articleFactory',
-        function($scope, $rootScope, $state, $stateParams, Notification, articleFactory)
+    .controller('articlesFilterController', ['$scope', '$state', '$stateParams', 'Notification', 'articleFactory',
+        function($scope, $state, $stateParams, Notification, articleFactory)
         {
             $scope.totalPages = 0;
             $scope.currentPage = 1;
@@ -78,7 +78,7 @@ angular.module('blog')
 
                 $scope.delete = function(slug)
                 {
-                    articleFactory.deleteArticle(slug, $rootScope.token)
+                    articleFactory.deleteArticle(slug)
                         .success(function()
                         {
                             Notification.success('<span class="fa fa-check-circle"></span> You successfully deleted article!');

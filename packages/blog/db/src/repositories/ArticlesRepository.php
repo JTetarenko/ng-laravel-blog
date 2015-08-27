@@ -58,24 +58,28 @@ class ArticlesRepository extends Repository implements ArticlesInterface
     /**
      * Save article
      * 
-     * @param  Request $request
+     * @param  array   $data
+     * @param  array   $category_list
+     * @param  array   $tag_list
      */
-    public function saveArticle($request)
+    public function saveArticle($data, $category_list, $tag_list)
     {
-        return $this->model->saveArticle($request);
+        return $this->model->saveArticle($data, $category_list, $tag_list);
     }
 
     /**
      * Edit article
      * 
      * @param  string   $slug
-     * @param  Request  $request
+     * @param  array    $data
+     * @param  array    $category_list
+     * @param  array    $tag_list
      */
-    public function editArticle($slug, $request)
+    public function editArticle($slug, $data, $category_list, $tag_list)
     {
         $article = $this->findArticle($slug);
 
-        return $this->model->editArticle($article, $request);
+        return $this->model->editArticle($article, $data, $category_list, $tag_list);
     }
 
     /**

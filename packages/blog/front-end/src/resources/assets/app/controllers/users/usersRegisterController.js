@@ -1,8 +1,8 @@
 angular.module('blog')
-    .controller('usersRegisterController', ['$rootScope', '$scope', '$state', '$window', '$cookies', 'userFactory',
-        function($rootScope, $scope, $state, userFactory, Notification)
+    .controller('usersRegisterController', ['$scope', '$state', 'userFactory', 'Notification', '$cookies',
+        function($scope, $state, userFactory, Notification, $cookies)
         {
-            if ($rootScope.loggedIn)
+            if ($cookies.get('token') !== undefined)
             {
                 $state.go('articles');
             }

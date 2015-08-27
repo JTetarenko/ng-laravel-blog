@@ -59,7 +59,7 @@ class UserController extends Controller
      */
     public function store(RegisterUserRequest $request)
     {
-        $this->user->registerUser($request);
+        $this->user->registerUser($request->all());
 
         return response()->json(['success' => 'User successfully created!'], 200);
     }
@@ -69,11 +69,11 @@ class UserController extends Controller
      * 
      * @param  EditEmailRequest     $request 
      * @param  integer              $id      
-     * @return json               
+     * @return json
      */
     public function changeEmail(EditEmailRequest $request, $id)
     {
-        $user = $this->user->editProfile($request, $id);
+        $user = $this->user->editProfile($request->all(), $id);
 
         event(new UserDoneActivity(['type' => 'edited profile', 'in' => $user->username]));
 
@@ -89,7 +89,7 @@ class UserController extends Controller
      */
     public function changePassword(EditPasswordRequest $request, $id)
     {
-        $user = $this->user->editProfile($request, $id);
+        $user = $this->user->editProfile($request->all(), $id);
 
         event(new UserDoneActivity('edited profile @ '. $user->username));
 

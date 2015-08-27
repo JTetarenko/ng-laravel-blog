@@ -1,11 +1,9 @@
 angular.module('blog')
-    .controller('logoutController', ['$rootScope', '$localStorage', '$cookies', '$state', '$window',
-        function($rootScope, $localStorage, $cookies, $state, $window)
+    .controller('logoutController', ['$rootScope', '$cookies', '$state', '$window',
+        function($rootScope, $cookies, $state, $window)
         {
-            if ($rootScope.loggedIn)
+            if ($cookies.get('token') !== undefined)
             {
-                delete $localStorage.token;
-
                 $cookies.remove('token');
                 $cookies.remove('user');
 

@@ -1,6 +1,6 @@
 angular.module('blog')
-    .controller('usersShowController', ['$scope', 'userFactory', '$stateParams', '$rootScope', '$timeout', '$window', '$state', 'Notification', '$interval',
-        function($scope, userFactory, $stateParams, $rootScope, $timeout, $window, $state, Notification, $interval)
+    .controller('usersShowController', ['$scope', 'userFactory', '$stateParams', '$rootScope', '$timeout', '$window', '$state', 'Notification',
+        function($scope, userFactory, $stateParams, $rootScope, $timeout, $window, $state, Notification)
         {
             userFactory.getUser($stateParams.userID)
                 .success(function(user, status)

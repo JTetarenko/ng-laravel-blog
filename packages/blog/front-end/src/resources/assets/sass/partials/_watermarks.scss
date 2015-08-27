@@ -3,10 +3,14 @@
 }
 
 .activated-watermark {
+    background-color: black;
     font-family: Roboto;
-    color: #000;
+    color: white;
     text-align: center;
     opacity: 0.99;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .activated {

@@ -24,9 +24,9 @@ angular.module('blog')
                 return $http.post($rootScope.endPoint + '/auth/login', credentials);
             };
 
-            factory.getUserFromToken = function(token)
+            factory.getUserFromToken = function()
             {
-                return $http.get($rootScope.endPoint + '/auth/user?token=' + token);
+                return $http.get($rootScope.endPoint + '/auth/user');
             };
 
             factory.createUser = function(credentials)
@@ -34,14 +34,14 @@ angular.module('blog')
                 return $http.post($rootScope.endPoint + '/users', credentials);
             };
 
-            factory.changeEmail = function(id, data, token)
+            factory.changeEmail = function(id, data)
             {
-                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/email?token=' + token, data);
+                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/email', data);
             };
 
-            factory.changePassword = function(id, data, token)
+            factory.changePassword = function(id, data)
             {
-                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/password?token=' + token, data);
+                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/password', data);
             };
 
             return factory;

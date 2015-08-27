@@ -24,8 +24,8 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <a ng-hide="auth.loggedIn" ui-sref="login" class="btn btn-primary navbar-btn"><span class="glyphicon glyphicon-log-in"></span> Sign in</a>
-                <li ng-show="loggedIn" dropdown dropdown-nav-account>
-                  <a href="" id="nav-account" class="dropdown-toggle" dropdown-toggle role="button"><span class="glyphicon glyphicon-user"></span> <b style="text-transform: capitalize">@{{ auth.user.username }}</b> <span class="caret"></span></a>
+                <li ng-show="auth.loggedIn" dropdown dropdown-nav-account>
+                  <a href="" id="nav-account" class="dropdown-toggle" dropdown-toggle role="button"><span class="glyphicon glyphicon-user"></span> <b style="text-transform: capitalize"><% auth.user.username %></b> <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="nav-account">
                     <li role="menuitem"><a ng-click="showProfile()" ui-sref="users_show({ userID: auth.user.id })">Show Profile</a></li>
                     <li ng-hide="auth.user.group_id > 2" role="menuitem"><a ng-click="showArticles()" ui-sref="users_show_stuff({ userID: auth.user.id, showParam: 'articles' })">My Articles</a></li>

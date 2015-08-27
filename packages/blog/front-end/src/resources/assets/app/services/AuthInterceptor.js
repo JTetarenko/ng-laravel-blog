@@ -1,6 +1,6 @@
 angular.module('blog')
   .factory('AuthInterceptor', ['$rootScope', '$q', '$location', '$injector', '$window', '$cookies',
-    function ($rootScope, $q, $location, $injector, $window, $cookies) {
+    function ($rootScope, $q, $state, $injector, $window, $cookies) {
         return {
             'request': function (config) {
                 config.headers = config.headers || {};
@@ -12,7 +12,7 @@ angular.module('blog')
             'response': function (response) {
                 if(response.headers('Authorization')) {
                     var token = response.headers('Authorization').replace('Bearer ', '');
-                    $cookies.put('jwt_token', token);
+                    $cookies.put('token', token);
                 }
                 return response;
             },
@@ -22,7 +22,7 @@ angular.module('blog')
                         response.data.error === 'token_expired' ||
                         response.data.error === 'token_invalid' ||
                         response.data.error === 'user_not_found') {
-                        $window.location.href = '/auth/login';
+                        $state.go('login');
                     }
                 }
                 return $q.reject(response);

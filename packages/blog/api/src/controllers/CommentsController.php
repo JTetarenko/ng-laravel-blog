@@ -58,7 +58,7 @@ class CommentsController extends Controller
      */
     public function store(CommentRequest $request, $slug)
     {
-        $article = $this->comment->saveComment($request, $slug);
+        $article = $this->comment->saveComment($request->body, $slug);
 
         event(new UserDoneActivity('commented in @ '. $article->title));
 
@@ -89,7 +89,7 @@ class CommentsController extends Controller
      */
     public function update(CommentRequest $request, $slug, $id)
     {
-        $article = $this->comment->editComment($request, $slug, $id);
+        $article = $this->comment->editComment($request->body, $slug, $id);
 
         event(new UserDoneActivity('edited comment in @ '. $article->title));
 

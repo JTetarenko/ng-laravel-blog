@@ -1,6 +1,6 @@
 <ol class="breadcrumb">
     <li><a ui-sref="articles">Articles</a></li>
-    <li><a ui-sref="articles_show({ articleSlug: article.slug })">@{{ article.title }}</a></li>
+    <li><a ui-sref="articles_show({ articleSlug: article.slug })"><% article.title %></a></li>
     <li class="active">Edit article</li>
 </ol>
 
@@ -12,7 +12,7 @@
 <div class="form-group">
     <label>Categories:</label>
     <select id="category_list" ng-model="selectedCategories" multiple="multiple" class="form-control">
-        <option ng-repeat="category in categories" value="@{{category.id}}">@{{ category.name }}</option>
+        <option ng-repeat="category in categories" value="<% category.id %>"><% category.name %></option>
     </select>
 </div>
 
@@ -44,7 +44,7 @@
 <div class="form-group">
     <label>Tags (Optional):</label>
     <select id="tag_list" ng-model="tag_list" multiple="multiple" class="form-control" placeholder="Select or type tags">
-        <option ng-repeat="tag in tags" value="@{{tag.id}}">@{{ tag.name }}</option>
+        <option ng-repeat="tag in tags" value="<% tag.id %>"><% tag.name %></option>
     </select>
 </div>
 

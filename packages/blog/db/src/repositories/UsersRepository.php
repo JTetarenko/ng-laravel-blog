@@ -69,26 +69,26 @@ class UsersRepository extends Repository implements UsersInterface
     /**
      * Register user
      * 
-     * @param  Request $request
+     * @param  array $data
      */
-    public function registerUser($request)
+    public function registerUser($data)
     {
         $users_group = $this->getUsersGroup();
 
-        $users_group->users()->create($request->all());
+        $users_group->users()->create($data);
     }
 
     /**
      * Edit profile
      * 
-     * @param  Request $request
-     * @param  integer $id
+     * @param  array    $data
+     * @param  integer  $id
      */
-    public function editProfile($request, $id)
+    public function editProfile($data, $id)
     {
         $user = $this->findUser($id);
 
-        $this->model->editProfile($request, $user);
+        $this->model->editProfile($data, $user);
 
         return $user;
     }

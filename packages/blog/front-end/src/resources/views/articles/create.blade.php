@@ -11,7 +11,7 @@
 <div class="form-group">
     <label>Categories:</label>
     <select id="category_list" ng-model="category_list" multiple="multiple" class="form-control">
-        <option ng-repeat="category in categories" value="@{{category.id}}">@{{ category.name }}</option>
+        <option ng-repeat="category in categories" value="<% category.id %>"><% category.name %></option>
     </select>
 </div>
 
@@ -43,7 +43,7 @@
 <div class="form-group">
     <label>Tags (Optional):</label>
     <select id="tag_list" ng-model="tag_list" multiple="multiple" class="form-control" placeholder="Select or type tags">
-        <option ng-repeat="tag in tags" value="@{{tag.id}}">@{{ tag.name }}</option>
+        <option ng-repeat="tag in tags" value="<% tag.id %>"><% tag.name %></option>
     </select>
 </div>
 

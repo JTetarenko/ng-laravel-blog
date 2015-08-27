@@ -10,7 +10,7 @@ interface ArticlesInterface
 {
     public function getPublishedArticles();
     public function findArticle($slug);
-    public function saveArticle($request);
-    public function editArticle($slug, $request);
+    public function saveArticle($data, $category_list, $tag_list);
+    public function editArticle($slug, $data, $category_list, $tag_list);
     public function deleteArticle($slug);
 }

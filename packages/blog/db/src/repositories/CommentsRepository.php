@@ -25,24 +25,24 @@ class CommentsRepository extends Repository implements CommentsInterface
     /**
      * Save comment
      * 
-     * @param  Request  $request
+     * @param  string   $body
      * @param  string   $slug
      */
-    public function saveComment($request, $slug)
+    public function saveComment($body, $slug)
     {
-        return $this->model->saveComment($request, $slug);
+        return $this->model->saveComment($body, $slug);
     }
 
     /**
      * Edit comment
      * 
-     * @param  Request  $request
+     * @param  string   $body
      * @param  string   $slug
      * @param  integer  $id
      */
-    public function editComment($request, $slug, $id)
+    public function editComment($body, $slug, $id)
     {
-        return $this->model->editComment($request, $slug, $id);
+        return $this->model->editComment($body, $slug, $id);
     }
 
     /**

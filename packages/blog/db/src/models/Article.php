@@ -133,17 +133,19 @@ class Article extends Model
     /**
      * Save article
      *
-     * @param Request $request
+     * @param  array   $data
+     * @param  array   $category_list
+     * @param  array   $tag_list
      */
-    public static function saveArticle($request)
+    public static function saveArticle($data, $category_list, $tag_list)
     {
-        $article = Auth::user()->articles()->create($request->all());
+        $article = Auth::user()->articles()->create($data);
 
-        $article->syncCategories($article, $request->category_list);
+        $article->syncCategories($article, $category_list);
 
-        if (!is_null($request->tag_list))
+        if (!is_null($tag_list))
         {
-            $article->syncTags($article, $request->tag_list);
+            $article->syncTags($article, $tag_list);
         }
 
         return $article;
@@ -153,17 +155,19 @@ class Article extends Model
      * Edit article
      *
      * @param Article $article Article model
-     * @param Request $request
+     * @param array   $data
+     * @param array   $category_list
+     * @param array   $tag_list
      */
-    public static function editArticle(Article $article, $request)
+    public static function editArticle(Article $article, $data, $category_list, $tag_list)
     {
-        $article->update($request->except(['category_list', 'tag_list']));
+        $article->update($data);
 
-        $article->syncCategories($article, $request->category_list);
+        $article->syncCategories($article, $category_list);
 
         if (count($request->tag_list) > 0)
         {
-            $article->syncTags($article, $request->tag_list);
+            $article->syncTags($article, $tag_list);
         }
         else
         {

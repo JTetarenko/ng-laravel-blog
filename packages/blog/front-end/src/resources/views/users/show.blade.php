@@ -2,7 +2,7 @@
 
 <ol class="breadcrumb">
     <li><a ui-sref="articles">Articles</a></li>
-    <li class="active" style="text-transform: capitalize">@{{ user.username }}</li>
+    <li class="active" style="text-transform: capitalize"><% user.username %></li>
 </ol>
 
 <div class="row">
@@ -10,14 +10,14 @@
         <div class="panel panel-primary" width="">
             <div class="panel-heading" ng-init="fontSize = '15px'">
                 <p class="panel-title" style="text-transform: capitalize">
-                    <span ng-hide="user.username.length<8" style="font-size: 13px">@{{ user.username }}'s profile</span>
-                    <span ng-hide="user.username.length>7" style="font-size: 16px">@{{ user.username }}'s profile</span>
+                    <span ng-hide="user.username.length<8" style="font-size: 13px"><% user.username %>'s profile</span>
+                    <span ng-hide="user.username.length>7" style="font-size: 16px"><% user.username %>'s profile</span>
                 </p>
             </div>
             <div class="panel-footer">
                 <info>
-                    <p><span class="fa fa-envelope" style="margin-right: 5px"></span> <span style="font-size: 11px">@{{ user.email }}</span></p>
-                    <p><span class="fa fa-users" style="margin-right: 5px"></span> <span style="font-size: 11px; color: blue">@{{ user.group.name }}</span></p>
+                    <p><span class="fa fa-envelope" style="margin-right: 5px"></span> <span style="font-size: 11px"><% user.email %></span></p>
+                    <p><span class="fa fa-users" style="margin-right: 5px"></span> <span style="font-size: 11px; color: blue"><% user.group.name %></span></p>
                 </info>
 
                 <div ng-show="auth.user.id === user.id || auth.user.group_id === 1" class="btn-group" dropdown dropdown-edit-user style="margin-left: 12px; margin-right: 12px">
@@ -38,10 +38,10 @@
                  <a href="" ng-click="getActivities()">Last activities</a>
             </li>
             <li ng-class="articlesActive">
-                 <a href="" ng-click="getArticles()"> <span class="badge pull-right">@{{ articles.length }}</span> Articles</a>
+                 <a href="" ng-click="getArticles()"> <span class="badge pull-right"><% articles.length %></span> Articles</a>
             </li>
             <li ng-class="commentsActive">
-                 <a href="" ng-click="getComments()"> <span class="badge pull-right">@{{ comments.length }}</span> Comments</a>
+                 <a href="" ng-click="getComments()"> <span class="badge pull-right"><% comments.length %></span> Comments</a>
             </li>
         </ul>
 
@@ -59,12 +59,12 @@
                     <span ng-hide="getFirstPart(activity.text) !== 'edited profile '" class="fa fa-user-md"></span> 
                 </td>
                 <td style="text-align: left; font-size: 15px">
-                    <span ng-hide="(getSecondPart(activity.text) === ' ' + user.username) || (getFirstPart(activity.text) === 'edited profile ')">@{{ getFirstPart(activity.text) }} <b>@{{ getSecondPart(activity.text) }}</b></span>
-                    <span ng-hide="(getFirstPart(activity.text) !== 'edited profile ') || (getSecondPart(activity.text) === ' ' + user.username)">edited <b style="text-transform: capitalize">@{{ getSecondPart(activity.text) }}</b> profile</span>
+                    <span ng-hide="(getSecondPart(activity.text) === ' ' + user.username) || (getFirstPart(activity.text) === 'edited profile ')"><% getFirstPart(activity.text) %> <b><% getSecondPart(activity.text) %></b></span>
+                    <span ng-hide="(getFirstPart(activity.text) !== 'edited profile ') || (getSecondPart(activity.text) === ' ' + user.username)">edited <b style="text-transform: capitalize"><% getSecondPart(activity.text) %></b> profile</span>
                     <span ng-hide="getSecondPart(activity.text) !== ' ' + user.username">edited his profile</span>
                 </td>
                 <td style="text-align: right">
-                    <span class="fa fa-clock-o"></span> <span time-ago from-time='@{{ activity.created_at }}'></span time-ago>
+                    <span class="fa fa-clock-o"></span> <span time-ago from-time='<% activity.created_at %>'></span time-ago>
                 </td>
             </tr>
             </table>
@@ -76,12 +76,12 @@
             <div class="row" ng-init="status = ''; watermark = 'passive-watermark'">
                 <div class="fade col-md-4" ng-repeat="article in articles | limitTo: articlesAmount">
                     <div class="thumbnail" ng-class="status" ng-click="go('#/articles/' + article.slug)" ng-mouseenter="status = 'unselectable activated'; watermark = 'activated-watermark'" ng-mouseleave="status = ''; watermark = 'passive-watermark'">
-                        <div class="caption" style="margin-bottom: -4.1em;">
-                            <h4 ng-class="watermark">
-                                @{{ article.title }}
+                        <div class="caption" style="margin-bottom: -4.4em;">
+                            <h4 ng-class="watermark" style="padding: 2px">
+                                <% article.title %>
                             </h4>
                         </div>
-                        <img ng-src="@{{ article.image_url }}">
+                        <img ng-src="<% article.image_url %>">
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
                 <p ng-hide="comments.length > 0">No comments to display</p>
                 <blockquote ng-repeat="comment in comments | limitTo: commentsAmount">
                     <span ng-bind-html="comment.body"></span>
-                    <small style="margin-top: 5px"><span class="fa fa-user"></span> <span style="text-transform: capitalize">@{{ user.username }}</span> <span class="fa fa-at"></span> <a href="#/articles/@{{ comment.article.slug }}" target="_blank">@{{ comment.article.title }}</a> <span class="fa fa-clock-o"></span> <span time-ago from-time='@{{ comment.created_at }}'></span time-ago></small>
+                    <small style="margin-top: 5px"><span class="fa fa-user"></span> <span style="text-transform: capitalize"><% user.username %></span> <span class="fa fa-at"></span> <a href="#/articles/<% comment.article.slug %>" target="_blank"><% comment.article.title %></a> <span class="fa fa-clock-o"></span> <span time-ago from-time='<% comment.created_at %>'></span time-ago></small>
                 </blockquote>
             </treasure-overlay-spinner>
         </div>

@@ -8,8 +8,15 @@ var blog = angular.module('blog', [
     'ui-notification',
     'treasure-overlay-spinner',
     'ngCookies'
-])
-.config(['$httpProvider', '$provide', function($httpProvider, $provide) {
+], 
+function($interpolateProvider) 
+{
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
+})
+
+.config(['$httpProvider', '$provide', function($httpProvider, $provide) 
+{
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
         $provide.factory('ErrorInterceptor', function ($q) {
             return {
@@ -19,8 +26,10 @@ var blog = angular.module('blog', [
             };
         });
         
+        $httpProvider.interceptors.push('ErrorInterceptor');
         $httpProvider.interceptors.push('AuthInterceptor');
-    }])
+}])
+
 .run(function($rootScope, $cookies, $http, $interval, $state, Notification, $window, $timeout)
 {
     $rootScope.endPoint = 'http://myblog.lv/api';
@@ -34,48 +43,18 @@ var blog = angular.module('blog', [
         popup: false
     };
 
-    $rootScope.loggedIn = true;
-
     if ($cookies.get('token') !== undefined)
     {
-        $rootScope.userObtained = false;
-        
-        $http.get($rootScope.endPoint + '/auth/user?token=' + $cookies.get('token'))
-            .success(function(response)
-            {
-                $rootScope.token = $cookies.get('token');
-                $rootScope.user = response.user;
-                $rootScope.userObtained = true;
-            })
-            .error(function()
-            {
-                $rootScope.loggedIn = false;
-                delete $rootScope.user;
-                
-                $cookies.remove('user');
-                $cookies.remove('token');
-
-                $state.go('login');
-
-                $timeout(function()
-                {
-                    $window.location.reload();
-                }, 200);
-            });
-
         $interval(function()
         {
             $http.get($rootScope.endPoint + '/auth/refresh-token?token=' + $rootScope.token)
                 .success(function(response)
                 {
-                    $rootScope.token = response.token;
                     $cookies.put('token', response.token);
                 })
                 .error(function()
                 {
-                    delete $rootScope.user;
-                    $rootScope.loggedIn = false;
-                    
+                    $cookies.remove('user');
                     $cookies.remove('token');
 
                     $state.go('login');
@@ -87,9 +66,5 @@ var blog = angular.module('blog', [
                     }, 200);
                 });
         }, 60000);
-    }
-    else
-    {
-        $rootScope.loggedIn = false;
     }
 });

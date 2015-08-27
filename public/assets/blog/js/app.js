@@ -8,8 +8,15 @@ var blog = angular.module('blog', [
     'ui-notification',
     'treasure-overlay-spinner',
     'ngCookies'
-])
-.config(['$httpProvider', '$provide', function($httpProvider, $provide) {
+], 
+function($interpolateProvider) 
+{
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
+})
+
+.config(['$httpProvider', '$provide', function($httpProvider, $provide) 
+{
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
         $provide.factory('ErrorInterceptor', function ($q) {
             return {
@@ -19,8 +26,10 @@ var blog = angular.module('blog', [
             };
         });
         
+        $httpProvider.interceptors.push('ErrorInterceptor');
         $httpProvider.interceptors.push('AuthInterceptor');
-    }])
+}])
+
 .run(function($rootScope, $cookies, $http, $interval, $state, Notification, $window, $timeout)
 {
     $rootScope.endPoint = 'http://myblog.lv/api';
@@ -34,48 +43,18 @@ var blog = angular.module('blog', [
         popup: false
     };
 
-    $rootScope.loggedIn = true;
-
     if ($cookies.get('token') !== undefined)
     {
-        $rootScope.userObtained = false;
-        
-        $http.get($rootScope.endPoint + '/auth/user?token=' + $cookies.get('token'))
-            .success(function(response)
-            {
-                $rootScope.token = $cookies.get('token');
-                $rootScope.user = response.user;
-                $rootScope.userObtained = true;
-            })
-            .error(function()
-            {
-                $rootScope.loggedIn = false;
-                delete $rootScope.user;
-                
-                $cookies.remove('user');
-                $cookies.remove('token');
-
-                $state.go('login');
-
-                $timeout(function()
-                {
-                    $window.location.reload();
-                }, 200);
-            });
-
         $interval(function()
         {
             $http.get($rootScope.endPoint + '/auth/refresh-token?token=' + $rootScope.token)
                 .success(function(response)
                 {
-                    $rootScope.token = response.token;
                     $cookies.put('token', response.token);
                 })
                 .error(function()
                 {
-                    delete $rootScope.user;
-                    $rootScope.loggedIn = false;
-                    
+                    $cookies.remove('user');
                     $cookies.remove('token');
 
                     $state.go('login');
@@ -87,10 +66,6 @@ var blog = angular.module('blog', [
                     }, 200);
                 });
         }, 60000);
-    }
-    else
-    {
-        $rootScope.loggedIn = false;
     }
 });
 angular.module('blog') 
@@ -247,29 +222,29 @@ angular.module('blog')
                 return $http.get($rootScope.endPoint + '/articles/' + slug);
             };
 
-            factory.beforeCreateArticle = function(token)
+            factory.beforeCreateArticle = function()
             {
                 return $http.get($rootScope.endPoint + '/articles/create');
             };
 
-            factory.createArticle = function(data, token)
+            factory.createArticle = function(data)
             {
                 return $http.post($rootScope.endPoint + '/articles', data);
             };
 
-            factory.beforeEditArticle = function(slug, token)
+            factory.beforeEditArticle = function(slug)
             {
-                return $http.get($rootScope.endPoint + '/articles/' + slug + '/edit?token=' + token);
+                return $http.get($rootScope.endPoint + '/articles/' + slug + '/edit');
             };
 
-            factory.editArticle = function(slug, dataWithToken)
+            factory.editArticle = function(slug, data)
             {
-                return $http.put($rootScope.endPoint + '/articles/' + slug + '?token=' + dataWithToken.token, dataWithToken);
+                return $http.put($rootScope.endPoint + '/articles/' + slug, data);
             };
 
-            factory.deleteArticle = function(slug, token)
+            factory.deleteArticle = function(slug)
             {
-                return $http.delete($rootScope.endPoint + '/articles/' + slug + '?token=' + token);
+                return $http.delete($rootScope.endPoint + '/articles/' + slug);
             };
 
             factory.filterByCategory = function(id, pageNumber)
@@ -297,7 +272,7 @@ angular.module('blog')
 ]);
 angular.module('blog')
   .factory('AuthInterceptor', ['$rootScope', '$q', '$location', '$injector', '$window', '$cookies',
-    function ($rootScope, $q, $location, $injector, $window, $cookies) {
+    function ($rootScope, $q, $state, $injector, $window, $cookies) {
         return {
             'request': function (config) {
                 config.headers = config.headers || {};
@@ -309,7 +284,7 @@ angular.module('blog')
             'response': function (response) {
                 if(response.headers('Authorization')) {
                     var token = response.headers('Authorization').replace('Bearer ', '');
-                    $cookies.put('jwt_token', token);
+                    $cookies.put('token', token);
                 }
                 return response;
             },
@@ -319,7 +294,7 @@ angular.module('blog')
                         response.data.error === 'token_expired' ||
                         response.data.error === 'token_invalid' ||
                         response.data.error === 'user_not_found') {
-                        $window.location.href = '/auth/login';
+                        $state.go('login');
                     }
                 }
                 return $q.reject(response);
@@ -332,24 +307,24 @@ angular.module('blog')
         {
             var factory = {};
 
-            factory.createComment = function(slug, data, token)
+            factory.createComment = function(slug, data)
             {
-                return $http.post($rootScope.endPoint + '/' + slug + '/comments?token=' + token, data);
+                return $http.post($rootScope.endPoint + '/' + slug + '/comments', data);
             };
 
-            factory.beforeEdit = function(slug, id, token)
+            factory.beforeEdit = function(slug, id)
             {
-                return $http.get($rootScope.endPoint + '/' + slug + '/comments/' + id + '?token=' + token);
+                return $http.get($rootScope.endPoint + '/' + slug + '/comments/' + id);
             };
 
-            factory.editComment = function(slug, id, dataWithToken)
+            factory.editComment = function(slug, id, data)
             {
-                return $http.put($rootScope.endPoint + '/' + slug + '/comments/' + id + '?token=' + dataWithToken.token, dataWithToken);
+                return $http.put($rootScope.endPoint + '/' + slug + '/comments/' + id, data);
             };
 
-            factory.deleteComment = function(slug, id, token)
+            factory.deleteComment = function(slug, id)
             {
-                return $http.delete($rootScope.endPoint + '/' + slug + '/comments/' + id + '?token=' + token);
+                return $http.delete($rootScope.endPoint + '/' + slug + '/comments/' + id);
             };
 
             return factory;
@@ -381,9 +356,9 @@ angular.module('blog')
                 return $http.post($rootScope.endPoint + '/auth/login', credentials);
             };
 
-            factory.getUserFromToken = function(token)
+            factory.getUserFromToken = function()
             {
-                return $http.get($rootScope.endPoint + '/auth/user?token=' + token);
+                return $http.get($rootScope.endPoint + '/auth/user');
             };
 
             factory.createUser = function(credentials)
@@ -391,24 +366,24 @@ angular.module('blog')
                 return $http.post($rootScope.endPoint + '/users', credentials);
             };
 
-            factory.changeEmail = function(id, data, token)
+            factory.changeEmail = function(id, data)
             {
-                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/email?token=' + token, data);
+                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/email', data);
             };
 
-            factory.changePassword = function(id, data, token)
+            factory.changePassword = function(id, data)
             {
-                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/password?token=' + token, data);
+                return $http.put($rootScope.endPoint + '/users/' + id + '/edit/password', data);
             };
 
             return factory;
         }
 ]);
 angular.module('blog')
-    .controller('authController', ['$scope', '$rootScope', 'Notification', '$state', '$auth', 'userFactory', '$cookies', '$window', '$state',
+    .controller('authController', ['$scope', '$rootScope', 'Notification', 'userFactory', '$cookies', '$window', '$state',
         function($scope, $rootScope, Notification, userFactory, $cookies, $window, $state)
         {
-            if ($rootScope.loggedIn)
+            if ($cookies.get('token') !== undefined)
             {
                 $state.go('home');
             }
@@ -425,12 +400,10 @@ angular.module('blog')
                     {
                         $cookies.put('token', response.token);
 
-                        $rootScope.token = response.token;
-
-                        userFactory.getUserFromToken(response.token)
+                        userFactory.getUserFromToken($cookies.get('token'))
                             .success(function(data)
                             {
-                                $rootScope.user = data.user;
+                                $cookies.putObject('user', data.user);
 
                                 $window.location.reload();
                             })
@@ -447,13 +420,11 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('logoutController', ['$rootScope', '$localStorage', '$cookies', '$state', '$window',
-        function($rootScope, $localStorage, $cookies, $state, $window)
+    .controller('logoutController', ['$rootScope', '$cookies', '$state', '$window',
+        function($rootScope, $cookies, $state, $window)
         {
-            if ($rootScope.loggedIn)
+            if ($cookies.get('token') !== undefined)
             {
-                delete $localStorage.token;
-
                 $cookies.remove('token');
                 $cookies.remove('user');
 
@@ -504,52 +475,28 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('articlesCreateController', ['$scope', '$rootScope', '$state', 'Notification', 'articleFactory', '$interval', 'blockUI',
-        function($scope, $rootScope, $state, Notification, articleFactory, $interval, blockUI)
+    .controller('articlesCreateController', ['$scope', '$state', 'Notification', 'articleFactory',
+        function($scope, $state, Notification, articleFactory)
         {
             $scope.published_at = new Date();
 
-            if ($rootScope.loggedIn)
-            {
-                blockUI.start();
-
-                var timer = $interval(function()
+            articleFactory.beforeCreateArticle()
+                .success(function(response)
                 {
-                    if ($rootScope.userObtained)
-                    {
-                        $interval.cancel(timer);
-                        delete timer;
-                        
-                        articleFactory.beforeCreateArticle($rootScope.token)
-                            .success(function(response)
-                            {
-                                $scope.category_list = [];
-                                $scope.tag_list = [];
+                    $scope.category_list = [];
+                    $scope.tag_list = [];
 
-                                $scope.categories = response.categories;
-                                $scope.tags = response.tags;
-                                blockUI.stop();
-                            })
-                            .error(function(response)
-                            {
-                                blockUI.stop();
-                                $state.go('articles');
+                    $scope.categories = response.categories;
+                    $scope.tags = response.tags;
+                })
+                .error(function(response)
+                {
+                    $state.go('articles');
 
-                                $rootScope.notification.type = 'error';
-                                $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                                $rootScope.notification.popup = true;
-                            });
-                    }
-                }, 100);
-            }
-            else
-            {
-                $state.go('articles');
-
-                $rootScope.notification.type = 'error';
-                $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                $rootScope.notification.popup = true;
-            }
+                    $rootScope.notification.type = 'error';
+                    $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
+                    $rootScope.notification.popup = true;
+                });
             
             $scope.create = function()
             {
@@ -579,7 +526,7 @@ angular.module('blog')
                     }
                 }
                 
-                articleFactory.createArticle(data, $rootScope.token)
+                articleFactory.createArticle(data)
                     .success(function()
                     {
                         $state.go('articles');
@@ -658,201 +605,173 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('articlesEditController', ['$scope', '$rootScope', '$state', '$stateParams', '$interval', 'Notification', 'blockUI', 'articleFactory',
-        function($scope, $rootScope, $state, $stateParams, $interval, Notification, blockUI, articleFactory)
+    .controller('articlesEditController', ['$scope', '$state', '$stateParams', 'Notification', 'articleFactory',
+        function($scope, $state, $stateParams, Notification, articleFactory)
         {
-            if ($rootScope.loggedIn)
-            {
-                blockUI.start();
-
-                var timer = $interval(function()
+            articleFactory.beforeEditArticle($stateParams.articleSlug)
+                .success(function(response)
                 {
-                    if ($rootScope.userObtained)
+                    $scope.article = response.article;
+                    $scope.categories = response.categories;
+                    $scope.tags = response.tags;
+
+                    $scope.slug = response.article.slug;
+                    $scope.category_list = response.article.categories;
+                    $scope.title = response.article.title;
+                    $scope.excerpt = response.article.excerpt;
+                    $scope.body = response.article.body;
+                    $scope.image_url = response.article.image_url;
+                    $scope.published_at = new Date(response.article.published_at.date);
+                    $scope.tag_list = response.article.tags;
+
+                    $scope.category_list = [];
+                    $scope.tag_list = [];
+
+                    for (i=0; i<response.categories.length; i++)
                     {
-                        $interval.cancel(timer);
-                        delete timer;
-
-                        articleFactory.beforeEditArticle($stateParams.articleSlug, $rootScope.token)
-                            .success(function(response)
-                            {
-                                $scope.article = response.article;
-                                $scope.categories = response.categories;
-                                $scope.tags = response.tags;
-
-                                $scope.slug = response.article.slug;
-                                $scope.category_list = response.article.categories;
-                                $scope.title = response.article.title;
-                                $scope.excerpt = response.article.excerpt;
-                                $scope.body = response.article.body;
-                                $scope.image_url = response.article.image_url;
-                                $scope.published_at = new Date(response.article.published_at.date);
-                                $scope.tag_list = response.article.tags;
-
-                                $scope.category_list = [];
-                                $scope.tag_list = [];
-
-                                for (i=0; i<response.categories.length; i++)
-                                {
-                                    for(j=0; j<response.article.categories.length; j++)
-                                    {
-                                        if (response.categories[i].id === response.article.categories[j].id)
-                                        {
-                                            $scope.category_list.push(response.categories[i]);
-                                        }
-                                    }
-                                }               
-
-                                $scope.$watch('category_list', function(nowSelected){
-                                    $scope.selectedCategories = [];
-                                    
-                                    if( ! nowSelected ){
-                                        // here we've initialized selected already
-                                        // but sometimes that's not the case
-                                        // then we get null or undefined
-                                        return;
-                                    }
-                                    angular.forEach(nowSelected, function(val){
-                                        $scope.selectedCategories.push( val.id.toString() );
-                                        $('#category_list').select2("val", $scope.selectedCategories);                          
-                                    });
-                                });
-
-                                blockUI.stop();
-                            })
-                            .error(function(response)
-                            {
-                                blockUI.stop();
-                                $state.go('articles');
-
-                                $rootScope.notification.type = 'error';
-                                $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                                $rootScope.notification.popup = true;
-                            });
-
-                        $scope.edit = function()
+                        for(j=0; j<response.article.categories.length; j++)
                         {
-                            console.log($rootScope.token);
-                            if (tag_list.length > 0)
+                            if (response.categories[i].id === response.article.categories[j].id)
                             {
-                                data = {
-                                    token: $rootScope.token,
-                                    slug: $scope.slug,
-                                    title: $scope.title,
-                                    category_list: $scope.selectedCategories,
-                                    excerpt: $scope.excerpt,
-                                    body: $scope.body,
-                                    image_url: $scope.image_url,
-                                    published_at: moment($scope.published_at).format('YYYY-MM-DD'),
-                                    tag_list: $scope.tag_list
-                                }
+                                $scope.category_list.push(response.categories[i]);
                             }
-                            else
-                            {
-                                data = {
-                                    token: $rootScope.token,
-                                    slug: $scope.slug,
-                                    title: $scope.title,
-                                    category_list: $scope.category_list,
-                                    excerpt: $scope.excerpt,
-                                    body: $scope.body,
-                                    image_url: $scope.image_url,
-                                    published_at: moment($scope.published_at).format('YYYY-MM-DD')
-                                }
-                            }
-                            
-                            articleFactory.editArticle($scope.slug, data)
-                                .success(function()
-                                {
-                                    $state.go('articles');
+                        }
+                    }               
 
-                                    $rootScope.notification.type = 'success';
-                                    $rootScope.notification.msg = '<span class="fa fa-check-circle"></span> You successfully edited article!';
-                                    $rootScope.notification.popup = true;
-                                })
-                                .error(function(response)
-                                {
-                                    console.log(response);
-                                    if (response.errors.slug[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.slug[0],
-                                            delay: 10000
-                                        });
-                                    }
+                    $scope.$watch('category_list', function(nowSelected){
+                        $scope.selectedCategories = [];
+                        
+                        if( ! nowSelected ){
+                            // here we've initialized selected already
+                            // but sometimes that's not the case
+                            // then we get null or undefined
+                            return;
+                        }
+                        angular.forEach(nowSelected, function(val){
+                            $scope.selectedCategories.push( val.id.toString() );
+                            $('#category_list').select2("val", $scope.selectedCategories);                          
+                        });
+                    });
+                })
+                .error(function(response)
+                {
+                    $state.go('articles');
 
-                                    if (response.errors.title[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.title[0],
-                                            delay: 10000
-                                        });
-                                    }
+                    $rootScope.notification.type = 'error';
+                    $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
+                    $rootScope.notification.popup = true;
+                });
 
-                                    if (response.errors.category_list[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.category_list[0],
-                                            delay: 10000
-                                        });
-                                    }
-
-                                    if (response.errors.excerpt[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.excerpt[0],
-                                            delay: 10000
-                                        });
-                                    }
-
-                                    if (response.errors.body[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.body[0],
-                                            delay: 10000
-                                        });
-                                    }
-
-                                    if (response.errors.image_url[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.image_url[0],
-                                            delay: 10000
-                                        });
-                                    }
-
-                                    if (response.errors.published_at[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.published_at[0],
-                                            delay: 10000
-                                        });
-                                    }
-
-                                    if (response.errors.tag_list[0] !== undefined)
-                                    {
-                                        Notification.error({
-                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.tag_list[0],
-                                            delay: 10000
-                                        });
-                                    }
-                                });
-                        };
+                $scope.edit = function()
+                {
+                    if (tag_list.length > 0)
+                    {
+                        data = {
+                            slug: $scope.slug,
+                            title: $scope.title,
+                            category_list: $scope.selectedCategories,
+                            excerpt: $scope.excerpt,
+                            body: $scope.body,
+                            image_url: $scope.image_url,
+                            published_at: moment($scope.published_at).format('YYYY-MM-DD'),
+                            tag_list: $scope.tag_list
+                        }
                     }
-                }, 100);
-            }
-            else
-            {
-                $state.go('articles');
+                    else
+                    {
+                        data = {
+                            slug: $scope.slug,
+                            title: $scope.title,
+                            category_list: $scope.category_list,
+                            excerpt: $scope.excerpt,
+                            body: $scope.body,
+                            image_url: $scope.image_url,
+                            published_at: moment($scope.published_at).format('YYYY-MM-DD')
+                        }
+                    }
+                    
+                    articleFactory.editArticle($scope.slug, data)
+                        .success(function()
+                        {
+                            $state.go('articles');
 
-                $rootScope.notification.type = 'error';
-                $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                $rootScope.notification.popup = true;
-            }
+                            $rootScope.notification.type = 'success';
+                            $rootScope.notification.msg = '<span class="fa fa-check-circle"></span> You successfully edited article!';
+                            $rootScope.notification.popup = true;
+                        })
+                        .error(function(response)
+                        {
+                            console.log(response);
+                            if (response.errors.slug[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.slug[0],
+                                    delay: 10000
+                                });
+                            }
+
+                            if (response.errors.title[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.title[0],
+                                    delay: 10000
+                                });
+                            }
+
+                            if (response.errors.category_list[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.category_list[0],
+                                    delay: 10000
+                                });
+                            }
+
+                            if (response.errors.excerpt[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.excerpt[0],
+                                    delay: 10000
+                                });
+                            }
+
+                            if (response.errors.body[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.body[0],
+                                    delay: 10000
+                                });
+                            }
+
+                            if (response.errors.image_url[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.image_url[0],
+                                    delay: 10000
+                                });
+                            }
+
+                            if (response.errors.published_at[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.published_at[0],
+                                    delay: 10000
+                                });
+                            }
+
+                            if (response.errors.tag_list[0] !== undefined)
+                            {
+                                Notification.error({
+                                    message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.tag_list[0],
+                                    delay: 10000
+                                });
+                            }
+                        });
+                };
         }
 ]);
 angular.module('blog')
-    .controller('articlesFilterController', ['$scope', '$rootScope', '$state', '$stateParams', 'Notification', 'articleFactory',
-        function($scope, $rootScope, $state, $stateParams, Notification, articleFactory)
+    .controller('articlesFilterController', ['$scope', '$state', '$stateParams', 'Notification', 'articleFactory',
+        function($scope, $state, $stateParams, Notification, articleFactory)
         {
             $scope.totalPages = 0;
             $scope.currentPage = 1;
@@ -930,7 +849,7 @@ angular.module('blog')
 
                 $scope.delete = function(slug)
                 {
-                    articleFactory.deleteArticle(slug, $rootScope.token)
+                    articleFactory.deleteArticle(slug)
                         .success(function()
                         {
                             Notification.success('<span class="fa fa-check-circle"></span> You successfully deleted article!');
@@ -944,8 +863,8 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('articlesIndexController', ['$scope', '$rootScope', 'articleFactory', 'Notification', '$window',
-        function($scope, $rootScope, articleFactory, Notification, $window)
+    .controller('articlesIndexController', ['$scope', 'articleFactory', 'Notification', '$window',
+        function($scope, articleFactory, Notification, $window)
         {
             $scope.totalPages = 0;
             $scope.currentPage = 1;
@@ -968,7 +887,8 @@ angular.module('blog')
                         // Pagination Range
                         var pages = [];
             
-                        for(var i=1;i<=response.last_page;i++) {          
+                        for(var i=1;i<=response.last_page;i++) 
+                        {
                             pages.push(i);
                         }
             
@@ -976,7 +896,7 @@ angular.module('blog')
 
                         $scope.delete = function(slug)
                         {
-                            articleFactory.deleteArticle(slug, $rootScope.token)
+                            articleFactory.deleteArticle(slug)
                                 .success(function()
                                 {
                                     Notification.success('<span class="fa fa-check-circle"></span> You successfully deleted article!');
@@ -992,8 +912,8 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('articlesShowController', ['$scope', '$rootScope', 'articleFactory', '$stateParams', '$timeout', '$state', 'Notification', 'commentFactory', '$window',
-        function($scope, $rootScope, articleFactory, $stateParams, $timeout, $state, Notification, commentFactory, $window)
+    .controller('articlesShowController', ['$scope', 'articleFactory', '$stateParams', '$timeout', '$state', 'Notification', 'commentFactory', '$window',
+        function($scope, articleFactory, $stateParams, $timeout, $state, Notification, commentFactory, $window)
         {
             var amount = 5;
             articleFactory.getArticle($stateParams.articleSlug)
@@ -1005,7 +925,7 @@ angular.module('blog')
 
                     $scope.delete = function()
                     {
-                        articleFactory.deleteArticle($stateParams.articleSlug, $rootScope.token)
+                        articleFactory.deleteArticle($stateParams.articleSlug)
                             .success(function()
                             {
                                 $state.go('articles');
@@ -1022,7 +942,7 @@ angular.module('blog')
 
                     $scope.deleteComment = function(id)
                     {
-                        commentFactory.deleteComment($stateParams.articleSlug, id, $rootScope.token)
+                        commentFactory.deleteComment($stateParams.articleSlug, id)
                             .success(function()
                             {
                                 $window.location.reload();
@@ -1071,8 +991,8 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('commentsCEController', ['$scope', '$rootScope', 'commentFactory', 'Notification', '$window', '$interval',
-        function($scope, $rootScope, commentFactory, $state, $stateParams, Notification, $window, $interval)
+    .controller('commentsCEController', ['$scope', '$cookies', 'commentFactory', '$state', '$stateParams', 'Notification', '$window',
+        function($scope, $cookies, commentFactory, $state, $stateParams, Notification, $window)
         {
             if ($stateParams.commentID === undefined)
             {
@@ -1084,7 +1004,7 @@ angular.module('blog')
                         body: $scope.create_body
                     };
 
-                    commentFactory.createComment($stateParams.articleSlug, data, $rootScope.token)
+                    commentFactory.createComment($stateParams.articleSlug, data)
                         .success(function()
                         {
                             $window.location.reload();
@@ -1099,107 +1019,78 @@ angular.module('blog')
             {
                 $scope.type = "edit";
 
-                if ($rootScope.loggedIn)
-                {
-                    var timer = $interval(function()
+                commentFactory.beforeEdit($stateParams.articleSlug, $stateParams.commentID)
+                    .success(function(response)
                     {
-                        if ($rootScope.userObtained)
+                        $scope.edit_body = response.body;
+
+                        $scope.edit = function()
                         {
-                            $interval.cancel(timer);
-                            delete timer;
+                            data = {
+                                body: $scope.edit_body,
+                                token: $rootScope.token
+                            }
 
-                            commentFactory.beforeEdit($stateParams.articleSlug, $stateParams.commentID, $rootScope.token)
-                                .success(function(response)
+                            commentFactory.editComment($stateParams.articleSlug, $stateParams.commentID, data)
+                                .success(function()
                                 {
-                                    $scope.edit_body = response.body;
-
-                                    $scope.edit = function()
-                                    {
-                                        data = {
-                                            body: $scope.edit_body,
-                                            token: $rootScope.token
-                                        }
-
-                                        commentFactory.editComment($stateParams.articleSlug, $stateParams.commentID, data)
-                                            .success(function()
-                                            {
-                                                $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
-                                            })
-                                            .error(function(response)
-                                            {
-                                                if (response.errors.body[0] !== undefined)
-                                                {
-                                                    Notification.error({
-                                                        message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.body[0],
-                                                        delay: 10000
-                                                    });
-                                                }
-                                            });
-                                    };
+                                    $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
                                 })
                                 .error(function(response)
                                 {
-                                    $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
-
-                                    $rootScope.notification.type = 'error';
-                                    $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                                    $rootScope.notification.popup = true;
+                                    if (response.errors.body[0] !== undefined)
+                                    {
+                                        Notification.error({
+                                            message: '<i class="fa fa-exclamation-circle"></i> ' + response.errors.body[0],
+                                            delay: 10000
+                                        });
+                                    }
                                 });
-                        }
-                    });
-                }
-                else
-                {
-                    $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
+                        };
+                    })
+                    .error(function(response)
+                    {
+                        $state.go('articles_show', { articleSlug: $stateParams.articleSlug });
 
-                    $rootScope.notification.type = 'error';
-                    $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
-                    $rootScope.notification.popup = true;
-                }
+                        $rootScope.notification.type = 'error';
+                        $rootScope.notification.msg = '<span class="fa fa-exclamation-triangle"></span> You do not have permission to access this page!';
+                        $rootScope.notification.popup = true;
+                    });
             }
         }
 ]);
 angular.module('blog')
-    .controller('usersController', ['$scope', '$rootScope', '$interval', 'blockUI',
-        function($scope, $rootScope, $interval, blockUI)
+    .controller('usersController', ['$scope', '$cookies',
+        function($scope, $cookies)
         {
-            if ($rootScope.loggedIn)
+            $scope.auth = {};
+
+            if ($cookies.get('token') !== undefined)
             {
-                blockUI.start();
-
-                $scope.auth = {};
-
                 $scope.auth.loggedIn = true;
 
-                $interval(function()
-                {
-                    if ($rootScope.userObtained)
-                    {
-                        $interval.cancel();
-                        $scope.auth.user = $rootScope.user;
-                        $scope.auth.token = $rootScope.token;
-                        blockUI.stop();
-                    }
-                }, 100);
+                $scope.auth.user = $cookies.getObject('user');
             }
             else
             {
-                $scope.loggedIn = false;
+                $scope.auth.loggedIn = false;
             }
         }
 ]);
 angular.module('blog')
-    .controller('usersEditController', ['$scope', '$rootScope', '$stateParams', '$state', 'userFactory', 'Notification',
-        function($scope, $rootScope, $stateParams, $state, userFactory, Notification)
+    .controller('usersEditController', ['$scope', '$cookies', '$stateParams', '$state', 'userFactory', 'Notification',
+        function($scope, $cookies, $stateParams, $state, userFactory, Notification)
         {
             userFactory.getUser($stateParams.userID)
-                .success(function(user, status)
+                .success(function(user)
                 {
                     $scope.user = user;
 
+                    authedUser = $cookies.getObject('user');
+
                     if ($stateParams.editParam === 'email')
                     {
-                        if ($rootScope.user.id === user.id || $rootScope.user.group_id === 1)
+                        if (authedUser.id === user.id || authedUser.group_id === 1)
                         {
                             $scope.edit = 'email';
                         }
@@ -1210,7 +1101,7 @@ angular.module('blog')
                     }
                     else if ($stateParams.editParam === 'password')
                     {
-                        if ($rootScope.user.id === user.id || $rootScope.user.group_id === 1)
+                        if (authedUser.id === user.id || authedUser.group_id === 1)
                         {
                             $scope.edit = 'password';
                         }
@@ -1250,7 +1141,7 @@ angular.module('blog')
                     email_confirmation: $scope.email_confirmation
                 };
 
-                userFactory.changeEmail($scope.user.id, credentials, $rootScope.token)
+                userFactory.changeEmail($scope.user.id, credentials)
                     .success(function()
                     {
                         $state.go('users_show', { userID: $stateParams.userID });
@@ -1274,10 +1165,8 @@ angular.module('blog')
                     password: $scope.password,
                     password_confirmation: $scope.password_confirmation
                 };
-
-                console.log($rootScope.token);
                 
-                userFactory.changePassword($scope.user.id, credentials, $rootScope.token)
+                userFactory.changePassword($scope.user.id, credentials)
                     .success(function()
                     {
                         $state.go('users_show', { userID: $stateParams.userID });
@@ -1297,10 +1186,10 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('usersRegisterController', ['$rootScope', '$scope', '$state', '$window', '$cookies', 'userFactory',
-        function($rootScope, $scope, $state, userFactory, Notification)
+    .controller('usersRegisterController', ['$scope', '$state', 'userFactory', 'Notification', '$cookies',
+        function($scope, $state, userFactory, Notification, $cookies)
         {
-            if ($rootScope.loggedIn)
+            if ($cookies.get('token') !== undefined)
             {
                 $state.go('articles');
             }
@@ -1353,8 +1242,8 @@ angular.module('blog')
         }
 ]);
 angular.module('blog')
-    .controller('usersShowController', ['$scope', 'userFactory', '$stateParams', '$rootScope', '$timeout', '$window', '$state', 'Notification', '$interval',
-        function($scope, userFactory, $stateParams, $rootScope, $timeout, $window, $state, Notification, $interval)
+    .controller('usersShowController', ['$scope', 'userFactory', '$stateParams', '$rootScope', '$timeout', '$window', '$state', 'Notification',
+        function($scope, userFactory, $stateParams, $rootScope, $timeout, $window, $state, Notification)
         {
             userFactory.getUser($stateParams.userID)
                 .success(function(user, status)

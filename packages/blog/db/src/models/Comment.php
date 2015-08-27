@@ -42,17 +42,17 @@ class Comment extends Model
     /**
      * Save comment in database
      * 
-     * @param  Request $request
+     * @param  string $body
      * @param  string $slug
      */
-    public static function saveComment($request, $slug)
+    public static function saveComment($body, $slug)
     {
         $article = Article::whereSlug($slug)->first();
 
         $comment = new Comment;
 
         $comment->user_id = Auth::user()->id;
-        $comment->body = $request->body;
+        $comment->body = $body;
 
         $article->comments()->save($comment);
 
@@ -62,17 +62,17 @@ class Comment extends Model
     /**
      * Update comment in database
      * 
-     * @param  Request $request 
+     * @param  string $body 
      * @param  string $slug    
      * @param  integer $id      
      */
-    public static function editComment($request, $slug, $id)
+    public static function editComment($body, $slug, $id)
     {
         $article = Article::whereSlug($slug)->first();
 
         $comment = Comment::find($id);
 
-        $comment->body = $request->body;
+        $comment->body = $body;
         $comment->edited = Auth::user()->username;
 
         $article->comments()->save($comment);

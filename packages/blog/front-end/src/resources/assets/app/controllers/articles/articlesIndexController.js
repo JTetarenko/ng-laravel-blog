@@ -1,6 +1,6 @@
 angular.module('blog')
-    .controller('articlesIndexController', ['$scope', '$rootScope', 'articleFactory', 'Notification', '$window',
-        function($scope, $rootScope, articleFactory, Notification, $window)
+    .controller('articlesIndexController', ['$scope', 'articleFactory', 'Notification', '$window',
+        function($scope, articleFactory, Notification, $window)
         {
             $scope.totalPages = 0;
             $scope.currentPage = 1;
@@ -23,7 +23,8 @@ angular.module('blog')
                         // Pagination Range
                         var pages = [];
             
-                        for(var i=1;i<=response.last_page;i++) {          
+                        for(var i=1;i<=response.last_page;i++) 
+                        {
                             pages.push(i);
                         }
             
@@ -31,7 +32,7 @@ angular.module('blog')
 
                         $scope.delete = function(slug)
                         {
-                            articleFactory.deleteArticle(slug, $rootScope.token)
+                            articleFactory.deleteArticle(slug)
                                 .success(function()
                                 {
                                     Notification.success('<span class="fa fa-check-circle"></span> You successfully deleted article!');

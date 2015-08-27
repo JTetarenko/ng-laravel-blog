@@ -1,6 +1,6 @@
 angular.module('blog')
-    .controller('articlesShowController', ['$scope', '$rootScope', 'articleFactory', '$stateParams', '$timeout', '$state', 'Notification', 'commentFactory', '$window',
-        function($scope, $rootScope, articleFactory, $stateParams, $timeout, $state, Notification, commentFactory, $window)
+    .controller('articlesShowController', ['$scope', 'articleFactory', '$stateParams', '$timeout', '$state', 'Notification', 'commentFactory', '$window',
+        function($scope, articleFactory, $stateParams, $timeout, $state, Notification, commentFactory, $window)
         {
             var amount = 5;
             articleFactory.getArticle($stateParams.articleSlug)
@@ -12,7 +12,7 @@ angular.module('blog')
 
                     $scope.delete = function()
                     {
-                        articleFactory.deleteArticle($stateParams.articleSlug, $rootScope.token)
+                        articleFactory.deleteArticle($stateParams.articleSlug)
                             .success(function()
                             {
                                 $state.go('articles');
@@ -29,7 +29,7 @@ angular.module('blog')
 
                     $scope.deleteComment = function(id)
                     {
-                        commentFactory.deleteComment($stateParams.articleSlug, id, $rootScope.token)
+                        commentFactory.deleteComment($stateParams.articleSlug, id)
                             .success(function()
                             {
                                 $window.location.reload();

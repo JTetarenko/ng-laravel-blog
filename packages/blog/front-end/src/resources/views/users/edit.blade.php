@@ -1,7 +1,7 @@
 <ol class="breadcrumb">
     <li><a ui-sref="articles">Articles</a></li>
-    <li><a ui-sref="users_show({ userID: user.id })" style="text-transform: capitalize">@{{ user.username }}</a></li>
-    <li class="active">Change @{{ edit }}</li>
+    <li><a ui-sref="users_show({ userID: user.id })" style="text-transform: capitalize"><% user.username %></a></li>
+    <li class="active">Change <% edit %></li>
 </ol>
 
 <div class="row">
@@ -9,14 +9,14 @@
         <div class="panel panel-primary" width="">
             <div class="panel-heading" ng-init="fontSize = '15px'">
                 <p class="panel-title" style="text-transform: capitalize">
-                    <span ng-hide="user.username.length<8" style="font-size: 13px">@{{ user.username }}'s profile</span>
-                    <span ng-hide="user.username.length>7" style="font-size: 16px">@{{ user.username }}'s profile</span>
+                    <span ng-hide="user.username.length<8" style="font-size: 13px"><% user.username %>'s profile</span>
+                    <span ng-hide="user.username.length>7" style="font-size: 16px"><% user.username %>'s profile</span>
                 </p>
             </div>
             <div class="panel-footer">
                 <info>
-                    <p><span class="fa fa-envelope" style="margin-right: 5px"></span> <span style="font-size: 10px">@{{ user.email }}</span></p>
-                    <p><span class="fa fa-users" style="margin-right: 5px"></span> <span style="font-size: 10px; color: blue">@{{ user.group.name }}</span></p>
+                    <p><span class="fa fa-envelope" style="margin-right: 5px"></span> <span style="font-size: 10px"><% user.email %></span></p>
+                    <p><span class="fa fa-users" style="margin-right: 5px"></span> <span style="font-size: 10px; color: blue"><% user.group.name %></span></p>
                 </info>
 
                 <div ng-show="auth.user.id === user.id" class="btn-group" dropdown dropdown-edit-user style="margin-left: 12px; margin-right: 12px">

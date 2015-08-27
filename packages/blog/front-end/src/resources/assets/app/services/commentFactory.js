@@ -4,24 +4,24 @@ angular.module('blog')
         {
             var factory = {};
 
-            factory.createComment = function(slug, data, token)
+            factory.createComment = function(slug, data)
             {
-                return $http.post($rootScope.endPoint + '/' + slug + '/comments?token=' + token, data);
+                return $http.post($rootScope.endPoint + '/' + slug + '/comments', data);
             };
 
-            factory.beforeEdit = function(slug, id, token)
+            factory.beforeEdit = function(slug, id)
             {
-                return $http.get($rootScope.endPoint + '/' + slug + '/comments/' + id + '?token=' + token);
+                return $http.get($rootScope.endPoint + '/' + slug + '/comments/' + id);
             };
 
-            factory.editComment = function(slug, id, dataWithToken)
+            factory.editComment = function(slug, id, data)
             {
-                return $http.put($rootScope.endPoint + '/' + slug + '/comments/' + id + '?token=' + dataWithToken.token, dataWithToken);
+                return $http.put($rootScope.endPoint + '/' + slug + '/comments/' + id, data);
             };
 
-            factory.deleteComment = function(slug, id, token)
+            factory.deleteComment = function(slug, id)
             {
-                return $http.delete($rootScope.endPoint + '/' + slug + '/comments/' + id + '?token=' + token);
+                return $http.delete($rootScope.endPoint + '/' + slug + '/comments/' + id);
             };
 
             return factory;

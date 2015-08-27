@@ -11,8 +11,8 @@ interface UsersInterface
     public function findUser($id);
     public function getUserLatestActivities($id);
     public function getUsersGroup();
-    public function registerUser($request);
-    public function editProfile($request, $id);
+    public function registerUser($data);
+    public function editProfile($data, $id);
     public function findUserArticles($id);
     public function findUserComments($id);
 }

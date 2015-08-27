@@ -1,15 +1,17 @@
 angular.module('blog')
-    .controller('usersEditController', ['$scope', '$rootScope', '$stateParams', '$state', 'userFactory', 'Notification',
-        function($scope, $rootScope, $stateParams, $state, userFactory, Notification)
+    .controller('usersEditController', ['$scope', '$cookies', '$stateParams', '$state', 'userFactory', 'Notification',
+        function($scope, $cookies, $stateParams, $state, userFactory, Notification)
         {
             userFactory.getUser($stateParams.userID)
-                .success(function(user, status)
+                .success(function(user)
                 {
                     $scope.user = user;
 
+                    authedUser = $cookies.getObject('user');
+
                     if ($stateParams.editParam === 'email')
                     {
-                        if ($rootScope.user.id === user.id || $rootScope.user.group_id === 1)
+                        if (authedUser.id === user.id || authedUser.group_id === 1)
                         {
                             $scope.edit = 'email';
                         }
@@ -20,7 +22,7 @@ angular.module('blog')
                     }
                     else if ($stateParams.editParam === 'password')
                     {
-                        if ($rootScope.user.id === user.id || $rootScope.user.group_id === 1)
+                        if (authedUser.id === user.id || authedUser.group_id === 1)
                         {
                             $scope.edit = 'password';
                         }
@@ -60,7 +62,7 @@ angular.module('blog')
                     email_confirmation: $scope.email_confirmation
                 };
 
-                userFactory.changeEmail($scope.user.id, credentials, $rootScope.token)
+                userFactory.changeEmail($scope.user.id, credentials)
                     .success(function()
                     {
                         $state.go('users_show', { userID: $stateParams.userID });
@@ -84,10 +86,8 @@ angular.module('blog')
                     password: $scope.password,
                     password_confirmation: $scope.password_confirmation
                 };
-
-                console.log($rootScope.token);
                 
-                userFactory.changePassword($scope.user.id, credentials, $rootScope.token)
+                userFactory.changePassword($scope.user.id, credentials)
                     .success(function()
                     {
                         $state.go('users_show', { userID: $stateParams.userID });

@@ -4030,10 +4030,12 @@ Copyright (c) 2015 Daniel Eden
   opacity: 0; }
 
 .activated-watermark {
+  background-color: black;
   font-family: Roboto;
-  color: #000;
+  color: white;
   text-align: center;
-  opacity: 0.99; }
+  opacity: 0.99;
+  border-radius: 5px; }
 
 .activated {
   background-color: black;

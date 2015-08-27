@@ -27,6 +27,7 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'jwt.auth'                      => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+        'jwt.refresh'                   => \Tymon\JWTAuth\Middleware\RefreshToken::class,
         'writer_permission'             => \App\Http\Middleware\RedirectIfUserNoPermission::class,
         'admin_permission'              => \App\Http\Middleware\RedirectIfWriterNoPermission::class,
         'article_exsists'               => \App\Http\Middleware\RedirectIfArticleNotExsists::class,

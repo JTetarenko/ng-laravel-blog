@@ -79,11 +79,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /**
      * Update user in database
-     * @param  Request $request 
+     * @param  array  $data 
      * @param  User   $user    User model
      */
-    public static function editProfile($request, User $user)
+    public static function editProfile($data, User $user)
     {
-        $user->update($request->all());
+        $user->update($data);
     }
 }

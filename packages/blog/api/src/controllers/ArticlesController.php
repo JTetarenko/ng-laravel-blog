@@ -59,9 +59,9 @@ class ArticlesController extends Controller
      */
     public function __construct(Article $article, Category $category, Tag $tag)
     {
-        $this->middleware('admin_permission', ['only' => ['edit', 'update', 'destroy']]);
-        $this->middleware('writer_permission', ['only' => ['create', 'store']]);
-        $this->middleware('article_exsists', ['only' => ['show']]);
+        $this->middleware('admin_permission', [ 'only' => ['edit', 'update', 'destroy'] ]);
+        $this->middleware('writer_permission', [ 'only' => ['create', 'store'] ]);
+        $this->middleware('article_exsists', [ 'only' => ['show'] ]);
 
         $this->article = $article;
         $this->tag = $tag;
@@ -103,7 +103,7 @@ class ArticlesController extends Controller
      */
     public function store(CreateArticleRequest $request)
     {
-        $article = $this->article->saveArticle($request);
+        $article = $this->article->saveArticle($request->except(['category_list', 'tag_list']), $request->category_list, $request->tag_list);
 
         event(new UserDoneActivity('created article @ '. $article->title));
 
@@ -149,7 +149,7 @@ class ArticlesController extends Controller
      */
     public function update($slug, EditArticleRequest $request)
     {
-        $article = $this->article->editArticle($slug, $request);
+        $article = $this->article->editArticle($slug, $request->except(['category_list', 'tag_list']), $request->category_list, $request->tag_list);
 
         event(new UserDoneActivity('edited article @ '. $article->title));
 

@@ -8,7 +8,7 @@ namespace Blog\db\Repositories\Interfaces;
  */
 interface CommentsInterface
 {
-    public function saveComment($request, $slug);
-    public function editComment($request, $slug, $id);
+    public function saveComment($body, $slug);
+    public function editComment($body, $slug, $id);
     public function deleteComment($slug, $id);
 }
