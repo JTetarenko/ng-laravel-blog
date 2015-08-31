@@ -5,8 +5,6 @@ namespace Blog\db\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use Carbon\Carbon;
-use JWTAuth;
-use Spatie\Activitylog\ActivitylogFacade as Activity;
 use Auth;
 
 /**

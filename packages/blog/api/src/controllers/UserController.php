@@ -75,7 +75,7 @@ class UserController extends Controller
     {
         $user = $this->user->editProfile($request->all(), $id);
 
-        event(new UserDoneActivity(['type' => 'edited profile', 'in' => $user->username]));
+        event(new UserDoneActivity('edited profile @ '. $user->username));
 
         return response()->json(['success' => 'User successfully edited!'], 200);
     }
